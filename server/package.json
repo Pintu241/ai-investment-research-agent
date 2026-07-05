@@ -1,15 +1,12 @@
 {
   "name": "investment-agent-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "AI Investment Research Agent Backend",
+  "main": "app.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "type": "module",
   "dependencies": {
     "@google/genai": "^2.10.0",
