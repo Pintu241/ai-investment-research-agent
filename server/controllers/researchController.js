@@ -1,12 +1,12 @@
 import Research from "../models/Research.js";
-import {
-  investmentGraph
-} from "../ai/graph/investmentGraph.js";
+import connectDB from "../config/db.js";
 
 export const createResearch = async (req, res) => {
   let researchRecord;
 
   try {
+    await connectDB();
+
     const { company } = req.body;
 
     if (!company || !company.trim()) {
@@ -20,6 +20,8 @@ export const createResearch = async (req, res) => {
       company: company.trim(),
       status: "pending"
     });
+
+    const { investmentGraph } = await import("../ai/graph/investmentGraph.js");
 
     const result =
       await investmentGraph.invoke({
