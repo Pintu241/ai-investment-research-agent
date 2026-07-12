@@ -44,11 +44,19 @@ Provide:
 - decision
 - confidence from 0 to 100
 - concise reasoning
+- businessScore: evaluation of the company's business strength (0 to 100)
+- financialScore: evaluation of the company's financial health (0 to 100)
+- newsScore: evaluation of the company's news sentiment (0 to 100)
+- riskScore: evaluation of the company's risk exposure level (0 to 100, where 100 is extremely high risk)
 `);
 
   return {
     decision: result.decision,
     confidence: result.confidence,
-    reasoning: result.reasoning
+    reasoning: result.reasoning,
+    businessScore: result.businessScore,
+    financialScore: result.financialScore,
+    newsScore: result.newsScore,
+    riskScore: result.riskScore
   };
 };

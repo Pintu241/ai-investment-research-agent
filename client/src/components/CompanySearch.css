@@ -971,3 +971,12 @@ button {
     display: none;
   }
 }
+
+.history-list-item:hover {
+  background-color: #f8fbff !important;
+  border-color: #cbd5e1 !important;
+}
+
+.original-action-btn:hover {
+  filter: brightness(0.95);
+}

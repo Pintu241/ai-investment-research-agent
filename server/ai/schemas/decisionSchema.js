@@ -12,5 +12,29 @@ export const decisionSchema = z.object({
     .min(0)
     .max(100),
 
-  reasoning: z.string()
+  reasoning: z.string(),
+
+  businessScore: z
+    .number()
+    .min(0)
+    .max(100)
+    .default(50),
+
+  financialScore: z
+    .number()
+    .min(0)
+    .max(100)
+    .default(50),
+
+  newsScore: z
+    .number()
+    .min(0)
+    .max(100)
+    .default(50),
+
+  riskScore: z
+    .number()
+    .min(0)
+    .max(100)
+    .default(50)
 });

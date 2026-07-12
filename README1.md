@@ -144,6 +144,10 @@ PASS
 -   Gemini LLM integration
 -   Separate frontend and backend deployments
 -   Environment-variable-based configuration
+-   **User Authentication (Login & Signup)**: JWT-based authorization, bcrypt password hashing, and complete data isolation (users only access their own reports).
+-   **Fully Functional Dashboard Buttons**: Reset buttons, history listings, saved bookmarks filters, and user profile menus.
+-   **Report Actions**: Quick inline bookmarking and report deletion with interactive confirm dialogs.
+-   **Graph Analysis Card**: Visual CSS bar charts rendering LLM-evaluated scores for Business Strength, Financial Health, News Sentiment, and Risk Level.
 
 ------------------------------------------------------------------------
 
@@ -169,8 +173,10 @@ PASS
 -   **LangGraph.js** --- stateful multi-step AI workflow
 -   **Google Gemini** --- large language model
 
-### Validation and Utilities
+### Validation, Security, and Utilities
 
+-   **jsonwebtoken** --- secure JSON Web Token authentication sessions
+-   **bcryptjs** --- password hashing with salt configuration
 -   **Zod** --- structured schema validation where used
 -   **dotenv** --- environment-variable loading
 -   **CORS** --- frontend/backend cross-origin communication
@@ -384,6 +390,9 @@ ai-investment-research-agent/
 │   ├── public/
 │   ├── src/
 │   │   ├── components/
+│   │   │   ├── CompanySearch.jsx
+│   │   │   ├── CompanySearch.css
+│   │   │   └── Auth.jsx
 │   │   ├── services/
 │   │   │   └── api.js
 │   │   ├── App.jsx
@@ -407,9 +416,16 @@ ai-investment-research-agent/
 │   ├── config/
 │   │   └── db.js
 │   ├── controllers/
+│   │   ├── researchController.js
+│   │   └── authController.js
+│   ├── middleware/
+│   │   └── authMiddleware.js
 │   ├── models/
+│   │   ├── Research.js
+│   │   └── User.js
 │   ├── routes/
-│   │   └── researchRoutes.js
+│   │   ├── researchRoutes.js
+│   │   └── authRoutes.js
 │   ├── app.js
 │   ├── server.js
 │   ├── .env
@@ -612,73 +628,125 @@ is correct.
 
 ## API Documentation
 
-### Health Check
+### 1. Authentication Endpoints
 
-**Method**
+#### Signup User
+* **Method**: `POST`
+* **Route**: `/api/auth/signup`
+* **Body**:
+  ```json
+  {
+    "name": "John Doe",
+    "email": "john@company.com",
+    "password": "password123"
+  }
+  ```
+* **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "User registered successfully",
+    "data": {
+      "_id": "user_id_string",
+      "name": "John Doe",
+      "email": "john@company.com",
+      "token": "signed_jwt_token_string"
+    }
+  }
+  ```
 
-``` text
-GET
-```
+#### Login User
+* **Method**: `POST`
+* **Route**: `/api/auth/login`
+* **Body**:
+  ```json
+  {
+    "email": "john@company.com",
+    "password": "password123"
+  }
+  ```
+* **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Login successful",
+    "data": {
+      "_id": "user_id_string",
+      "name": "John Doe",
+      "email": "john@company.com",
+      "token": "signed_jwt_token_string"
+    }
+  }
+  ```
 
-**Route**
+#### Get Current User Profile
+* **Method**: `GET`
+* **Route**: `/api/auth/me`
+* **Headers**: `Authorization: Bearer <JWT_TOKEN>`
+* **Response**:
+  ```json
+  {
+    "success": true,
+    "data": {
+      "_id": "user_id_string",
+      "name": "John Doe",
+      "email": "john@company.com"
+    }
+  }
+  ```
 
-``` text
-/
-```
+### 2. Research Endpoints (Protected by JWT)
 
-**Example response**
+All research calls require the `Authorization` header populated with `Bearer <JWT_TOKEN>`.
 
-``` json
-{
-  "success": true,
-  "message": "AI Investment Research API is running"
-}
-```
+#### Create Company Research
+* **Method**: `POST`
+* **Route**: `/api/research`
+* **Body**:
+  ```json
+  {
+    "company": "Tata Motors"
+  }
+  ```
+* **Response**: Returns the compiled LangGraph object mapped to MongoDB:
+  ```json
+  {
+    "success": true,
+    "message": "Investment research completed",
+    "data": {
+      "_id": "report_id_string",
+      "company": "tata motors",
+      "status": "completed",
+      "decision": "WATCH",
+      "confidence": 70,
+      "reasoning": "Synthesis reasoning...",
+      "businessScore": 75,
+      "financialScore": 60,
+      "newsScore": 65,
+      "riskScore": 40,
+      "user": "user_id_string"
+    }
+  }
+  ```
 
-### Create Company Research
+#### Get User's Research History
+* **Method**: `GET`
+* **Route**: `/api/research`
+* **Response**: Array of reports compiled by the authenticated user.
 
-**Method**
+#### Get Report Detail by ID
+* **Method**: `GET`
+* **Route**: `/api/research/:id`
+* **Response**: Detailed research document if it belongs to the logged-in user.
 
-``` text
-POST
-```
+#### Delete Report by ID
+* **Method**: `DELETE`
+* **Route**: `/api/research/:id`
 
-**Route**
-
-``` text
-/api/research
-```
-
-**Request body**
-
-``` json
-{
-  "company": "Tata Motors"
-}
-```
-
-**Example response structure**
-
-``` json
-{
-  "company": "Tata Motors",
-  "decision": "WATCH",
-  "confidence": 70,
-  "overview": "Company overview...",
-  "strengths": [
-    "Strong brand presence",
-    "Diversified operations"
-  ],
-  "risks": [
-    "Capital-intensive operations",
-    "Competitive pressure"
-  ],
-  "reasoning": "Final investment reasoning..."
-}
-```
-
-> The exact response structure depends on the current AI prompts, graph
-> state, controller, and model schema.
+#### Toggle Save / Bookmark Status
+* **Method**: `PATCH`
+* **Route**: `/api/research/:id/toggle-save`
+* **Response**: Toggles saved boolean and returns updated bookmark details.
 
 ------------------------------------------------------------------------
 

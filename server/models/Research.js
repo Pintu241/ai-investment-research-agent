@@ -64,6 +64,30 @@ const researchSchema = new mongoose.Schema(
         reasoning: {
             type: String,
             default: ""
+        },
+        saved: {
+            type: Boolean,
+            default: false
+        },
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        },
+        businessScore: {
+            type: Number,
+            default: 50
+        },
+        financialScore: {
+            type: Number,
+            default: 50
+        },
+        newsScore: {
+            type: Number,
+            default: 50
+        },
+        riskScore: {
+            type: Number,
+            default: 50
         }
     },
     {

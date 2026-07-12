@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import researchRoutes from "./routes/researchRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/research", researchRoutes);
 
 export default app;
