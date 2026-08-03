@@ -138,6 +138,68 @@ function CompanySearch({ currentUser, onLogout }) {
 
   const currentTab = tabs[activeTab];
 
+  // Derive realistic numeric scores from textual analysis when explicit scores are missing
+  const computeScores = (res) => {
+    const clamp = (v) => Math.max(0, Math.min(100, Math.round(v)));
+    if (!res) return { businessScore: 50, financialScore: 50, newsScore: 50, riskScore: 50 };
+
+    const getMatches = (text, terms) => {
+      if (!text) return 0;
+      const s = text.toLowerCase();
+      return terms.reduce((acc, t) => acc + (s.includes(t) ? 1 : 0), 0);
+    };
+
+    // Base values
+    let business = typeof res.businessScore === "number" ? res.businessScore : 50;
+    let financial = typeof res.financialScore === "number" ? res.financialScore : 50;
+    let news = typeof res.newsScore === "number" ? res.newsScore : 50;
+    let risk = typeof res.riskScore === "number" ? res.riskScore : 50;
+
+    if (typeof res.businessScore !== "number") {
+      const pos = getMatches(res.research, ["strong", "leader", "leading", "growing", "growth", "expanding", "competitive"]);
+      const neg = getMatches(res.research, ["weak", "declin", "loss", "down", "lose", "stagnant"]);
+      business = 50 + (pos - neg) * 12;
+    }
+
+    if (typeof res.financialScore !== "number") {
+      const pos = getMatches(res.financialAnalysis, ["profit", "positive", "beat", "earnings", "growth", "revenue", "surplus"]);
+      const neg = getMatches(res.financialAnalysis, ["loss", "losses", "deficit", "debt", "declin", "cut", "negative"]);
+      financial = 50 + (pos - neg) * 12;
+    }
+
+    if (typeof res.newsScore !== "number") {
+      const pos = getMatches(res.newsAnalysis, ["positive", "up", "gain", "improve", "beat", "optimis"]);
+      const neg = getMatches(res.newsAnalysis, ["negative", "down", "lawsuit", "recall", "concern", "drop", "criticism"]);
+      news = 50 + (pos - neg) * 12;
+    }
+
+    if (typeof res.riskScore !== "number") {
+      const matches = getMatches(res.riskAnalysis, ["risk", "concern", "issue", "exposure", "uncertain", "volatile", "debt", "lawsuit", "regulator"]);
+      risk = 50 + matches * 12; // more matches -> higher risk
+    }
+
+    // Slightly adjust with decision/confidence if present
+    if (res.decision === "INVEST") {
+      business += 8; financial += 6; news += 4; risk -= 8;
+    }
+    if (res.decision === "PASS") {
+      risk += 8; business -= 6; financial -= 6;
+    }
+    if (typeof res.confidence === "number") {
+      const delta = (res.confidence - 50) * 0.2;
+      business += delta; financial += delta; news += delta;
+    }
+
+    return {
+      businessScore: clamp(business),
+      financialScore: clamp(financial),
+      newsScore: clamp(news),
+      riskScore: clamp(risk)
+    };
+  };
+
+  const computedScores = computeScores(result);
+
   // Filter lists
   const displayList = activeSidebar === "saved" 
     ? historyList.filter(item => item.saved) 
@@ -566,40 +628,40 @@ function CompanySearch({ currentUser, onLogout }) {
                         <div>
                           <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px", fontWeight: "600" }}>
                             <span>Business Strength</span>
-                            <strong>{result.businessScore || 50}%</strong>
+                            <strong>{typeof result?.businessScore === "number" ? result.businessScore : computedScores.businessScore}%</strong>
                           </div>
                           <div style={{ height: "6px", background: "#eef1f5", borderRadius: "3px", overflow: "hidden" }}>
-                            <div style={{ width: `${result.businessScore || 50}%`, height: "100%", background: "#2468d8", borderRadius: "3px" }} />
+                            <div style={{ width: `${typeof result?.businessScore === "number" ? result.businessScore : computedScores.businessScore}%`, height: "100%", background: "#2468d8", borderRadius: "3px" }} />
                           </div>
                         </div>
                         
                         <div>
                           <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px", fontWeight: "600" }}>
                             <span>Financial Health</span>
-                            <strong>{result.financialScore || 50}%</strong>
+                            <strong>{typeof result?.financialScore === "number" ? result.financialScore : computedScores.financialScore}%</strong>
                           </div>
                           <div style={{ height: "6px", background: "#eef1f5", borderRadius: "3px", overflow: "hidden" }}>
-                            <div style={{ width: `${result.financialScore || 50}%`, height: "100%", background: "#267747", borderRadius: "3px" }} />
+                            <div style={{ width: `${typeof result?.financialScore === "number" ? result.financialScore : computedScores.financialScore}%`, height: "100%", background: "#267747", borderRadius: "3px" }} />
                           </div>
                         </div>
                         
                         <div>
                           <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px", fontWeight: "600" }}>
                             <span>News Sentiment</span>
-                            <strong>{result.newsScore || 50}%</strong>
+                            <strong>{typeof result?.newsScore === "number" ? result.newsScore : computedScores.newsScore}%</strong>
                           </div>
                           <div style={{ height: "6px", background: "#eef1f5", borderRadius: "3px", overflow: "hidden" }}>
-                            <div style={{ width: `${result.newsScore || 50}%`, height: "100%", background: "#b47700", borderRadius: "3px" }} />
+                            <div style={{ width: `${typeof result?.newsScore === "number" ? result.newsScore : computedScores.newsScore}%`, height: "100%", background: "#b47700", borderRadius: "3px" }} />
                           </div>
                         </div>
                         
                         <div>
                           <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px", fontWeight: "600" }}>
                             <span>Risk exposure (lower is better)</span>
-                            <strong>{result.riskScore || 50}%</strong>
+                            <strong>{typeof result?.riskScore === "number" ? result.riskScore : computedScores.riskScore}%</strong>
                           </div>
                           <div style={{ height: "6px", background: "#eef1f5", borderRadius: "3px", overflow: "hidden" }}>
-                            <div style={{ width: `${result.riskScore || 50}%`, height: "100%", background: "#b13b34", borderRadius: "3px" }} />
+                            <div style={{ width: `${typeof result?.riskScore === "number" ? result.riskScore : computedScores.riskScore}%`, height: "100%", background: "#b13b34", borderRadius: "3px" }} />
                           </div>
                         </div>
                       </div>
