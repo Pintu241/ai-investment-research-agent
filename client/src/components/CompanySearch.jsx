@@ -26,7 +26,7 @@ function CompanySearch({ currentUser, onLogout }) {
     fetchHistory();
   }, []);
 
-  const fetchHistory = async () => {
+  async function fetchHistory() {
     try {
       const response = await getResearchHistory();
       if (response && response.success) {
@@ -35,7 +35,7 @@ function CompanySearch({ currentUser, onLogout }) {
     } catch (err) {
       console.error("Error loading history:", err);
     }
-  };
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -772,7 +772,7 @@ function CompanySearch({ currentUser, onLogout }) {
                       </button>
                       <button 
                         type="button"
-                        onClick={(e) => setDeleteConfirmId(item._id)}
+                        onClick={() => setDeleteConfirmId(item._id)}
                         style={{ padding: "6px 12px", border: "1px solid #f1d0ce", background: "#fff7f6", borderRadius: "5px", color: "#b13b34", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}
                       >
                         Delete

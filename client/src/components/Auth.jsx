@@ -182,15 +182,15 @@ function Auth({ onAuthSuccess }) {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@company.com"
               style={{
-                width: "100%",
-                padding: "10px 12px",
-                border: "1px solid #d7dee8",
-                borderRadius: "6px",
-                fontSize: "13px",
-                outline: "none",
-                background: "#ffffff",
-                color: "#1d2738"
-              }}
+                  width: "100%",
+                  padding: "10px 12px",
+                  border: "1px solid #d7dee8",
+                  borderRadius: "6px",
+                  fontSize: "13px",
+                  outline: "none",
+                  background: "#ffffff",
+                  color: "#1d2738"
+                }}
             />
           </div>
 
@@ -203,15 +203,15 @@ function Auth({ onAuthSuccess }) {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               style={{
-                width: "100%",
-                padding: "10px 12px",
-                border: "1px solid #d7dee8",
-                borderRadius: "6px",
-                fontSize: "13px",
-                outline: "none",
-                background: "#ffffff",
-                color: "#1d2738"
-              }}
+                  width: "100%",
+                  padding: "10px 12px",
+                  border: "1px solid #d7dee8",
+                  borderRadius: "6px",
+                  fontSize: "13px",
+                  outline: "none",
+                  background: "#ffffff",
+                  color: "#1d2738"
+                }}
             />
           </div>
 
@@ -239,7 +239,7 @@ function Auth({ onAuthSuccess }) {
           )}
 
           {error && (
-            <p style={{
+              <p style={{
               margin: "0",
               color: "#b42318",
               fontSize: "12px",

@@ -1,3 +1,20 @@
 #root {
   min-height: 100vh;
 }
+
+:root {
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --muted: #6b7a8a;
+  --primary: #2468d8;
+  --accent: #1858bd;
+  --success: #267747;
+  --danger: #b13b34;
+  --radius: 10px;
+  --card-shadow: 0 8px 24px rgba(31,45,61,0.06);
+  font-size: 16px;
+}
+
+#root {
+  min-height: 100vh;
+}
