@@ -25,6 +25,7 @@ score and reasoning.
 -   [Environment Variables](#environment-variables)
 -   [API Documentation](#api-documentation)
 -   [Deployment on Vercel](#deployment-on-vercel)
+-   [Automated CI/CD Pipeline (Jenkins & AWS EC2)](#automated-cicd-pipeline-jenkins--aws-ec2)
 -   [Connecting Frontend and Backend](#connecting-frontend-and-backend)
 -   [Example Runs](#example-runs)
 -   [Key Decisions and Trade-offs](#key-decisions-and-trade-offs)
@@ -882,6 +883,222 @@ https://your-real-backend-domain.vercel.app/api
 
 Redeploy the frontend after changing `VITE_API_URL` because Vite
 environment variables are included during the build.
+
+------------------------------------------------------------------------
+
+## Automated CI/CD Pipeline (Jenkins & AWS EC2)
+
+This project includes an enterprise-grade Continuous Integration and Continuous Deployment (CI/CD) pipeline built with **Jenkins**, **Docker Compose**, and **AWS EC2**. Every push to the `main` branch triggers an automated build, validation, containerization, and zero-downtime deployment.
+
+```text
++------------------+         Push          +------------------------+
+|  Developer Push  | --------------------> |   GitHub Repository    |
++------------------+                       +------------------------+
+                                                       |
+                                            Webhook    | (POST /github-webhook/)
+                                                       v
+                                           +------------------------+
+                                           |      Jenkins CI        |
+                                           |  - Checkout            |
+                                           |  - Install Deps        |
+                                           |  - Lint Frontend       |
+                                           |  - Validate Backend    |
+                                           |  - Build React App     |
+                                           |  - Docker Compose Test |
+                                           +------------------------+
+                                                       |
+                                           SSH & Rsync | (Secure Credentials)
+                                                       v
+                                           +------------------------+
+                                           |      AWS EC2 Host      |
+                                           |  - Inject Secrets      |
+                                           |  - docker compose up   |
+                                           |  - Health Verification |
+                                           +------------------------+
+```
+
+---
+
+### 1. Jenkins Architecture & Pipeline Overview
+
+The declarative pipeline is defined in [`Jenkinsfile`](./Jenkinsfile) and executes the following sequential stages:
+
+1. **Checkout Source**: Retrieves the latest repository revision using Git SCM.
+2. **Install Dependencies**: Runs clean package installations (`npm ci || npm install`) across both `client` and `server`.
+3. **Lint & Code Quality**: Executes ESLint on the React frontend (`npm run lint`).
+4. **Backend Validation & Tests**: Performs syntax validation and module checks across all backend files (`npm test`).
+5. **Build Frontend**: Compiles production-optimized client assets (`npm run build`).
+6. **Docker Image Build**: Builds and validates Docker images via `docker compose build --pull`.
+7. **Deploy to AWS EC2**:
+   - Securely opens an SSH session to the EC2 host using Jenkins credentials.
+   - Synchronizes application code and Docker configurations via `rsync`.
+   - Generates a production `.env` file on the remote host with restricted permissions (`chmod 600`).
+   - Restarts containers using `docker compose up -d --build --remove-orphans`.
+   - Executes [`scripts/healthcheck.sh`](./scripts/healthcheck.sh) to verify `HTTP 200` on both backend (`:5000/`) and frontend (`:5173/`).
+
+---
+
+### 2. Jenkins Prerequisites & Plugins
+
+#### A. Host Requirements for Jenkins Server
+- **OS**: Ubuntu 22.04 LTS / Debian 12 / Amazon Linux 2023 (or running in Docker).
+- **Java**: OpenJDK 17 or 21 (`sudo apt install openjdk-17-jdk`).
+- **Node.js**: v20.x (`nvm install 20` or NodeSource PPA).
+- **Docker**: Docker Engine 24+ & Docker Compose v2 (`docker-compose-plugin`).
+- **CLI Utilities**: `git`, `rsync`, `curl`, `ssh`.
+
+#### B. Required Jenkins Plugins
+Install the following plugins via **Manage Jenkins** > **Plugins** > **Available plugins**:
+- **Pipeline** (`workflow-aggregator`) - Core declarative pipeline support.
+- **GitHub Integration Plugin** (`github`) - GitHub webhook listener and push notifications.
+- **SSH Agent Plugin** (`ssh-agent`) - Enables SSH key authentication without writing keys to disk.
+- **Credentials Binding Plugin** (`credentials-binding`) - Secure injection of secrets into shell environments.
+- **AnsiColor** (`ansicolor`) - Renders ANSI color codes in console output.
+
+---
+
+### 3. Jenkins Credentials Configuration
+
+Navigate to **Manage Jenkins** > **Credentials** > **System** > **Global credentials (unrestricted)** > **Add Credentials**. Add the following items:
+
+| Credential ID | Kind | Value / Format | Description |
+| :--- | :--- | :--- | :--- |
+| `ec2-ssh-key` | **SSH Username with private key** | Username: `ubuntu` (or `ec2-user`), Key: paste private `.pem` key | SSH private key to authenticate to AWS EC2 |
+| `EC2_HOST` | **Secret text** | e.g. `54.210.120.45` | Public IP or DNS of the AWS EC2 instance |
+| `MONGO_URI` | **Secret text** | `mongodb+srv://<user>:<password>@cluster0.mongodb.net/dbname` | MongoDB Atlas production connection string |
+| `GEMINI_API_KEY` | **Secret text** | `AIzaSy...` | Google Gemini API key for LangGraph reasoning |
+| `JWT_SECRET` | **Secret text** | e.g. `super_secure_jwt_random_secret_string_32chars` | Secret key used for signing user auth tokens |
+| `VITE_API_URL` | **Secret text** | e.g. `http://54.210.120.45:5000/api` | Public backend endpoint accessed by client browsers |
+
+> [!SECURITY]
+> All credentials managed via `withCredentials` in Jenkins are masked in console output as `****` to prevent secret leakage.
+
+---
+
+### 4. GitHub Webhook Setup
+
+1. Open your GitHub repository in your browser: `https://github.com/Pintu241/ai-investment-research-agent`.
+2. Navigate to **Settings** > **Webhooks** > **Add webhook**.
+3. Configure the fields:
+   - **Payload URL**: `http://<YOUR_JENKINS_PUBLIC_IP>:8080/github-webhook/`
+   - **Content type**: `application/json`
+   - **Secret**: *(Leave blank or supply matching secret if configured)*
+   - **Which events would you like to trigger this webhook?**: Select **Just the push event**.
+   - Check **Active**.
+4. Click **Add webhook**. A green checkmark indicates a successful handshake.
+
+---
+
+### 5. AWS EC2 Setup & Provisioning
+
+#### A. Recommended Instance Specifications
+- **Instance Type**: `t3.medium` or `t3.large` (2 vCPU, 4GB+ RAM recommended for running parallel Docker builds and AI Node services).
+- **Operating System**: Ubuntu 22.04 LTS (HVM) or Amazon Linux 2023.
+- **Storage**: Minimum 20 GB gp3 SSD.
+
+#### B. EC2 Security Group Configuration
+In the AWS Management Console under **EC2** > **Security Groups**, configure the inbound rules:
+
+| Type | Protocol | Port Range | Source | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **SSH** | TCP | `22` | `<Your_Jenkins_IP>/32` (or Admin IP) | Secure remote deployment access |
+| **Custom TCP** | TCP | `5000` | `0.0.0.0/0` | Backend API (Express.js REST endpoints) |
+| **Custom TCP** | TCP | `5173` | `0.0.0.0/0` | Frontend Web UI (React + Vite) |
+| **HTTP** *(optional)* | TCP | `80` | `0.0.0.0/0` | HTTP traffic (if running Nginx reverse proxy) |
+
+#### C. Initial Server Preparation on EC2
+Log in to your EC2 instance once to configure Docker permissions:
+
+```bash
+# 1. Update and install Docker + Docker Compose + rsync
+sudo apt update -y && sudo apt upgrade -y
+sudo apt install -y ca-certificates curl gnupg lsb-release rsync
+
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update -y
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# 2. Grant ubuntu user non-root Docker privileges
+sudo usermod -aG docker ubuntu
+newgrp docker
+
+# 3. Create target deployment directory
+mkdir -p /home/ubuntu/ai-investment-research-agent
+```
+
+> [!IMPORTANT]
+> Ensure your EC2 Elastic/Public IP is added to the **MongoDB Atlas Network Access IP Whitelist** so the backend container can reach the database.
+
+---
+
+### 6. Executing the Pipeline
+
+#### Automatic Trigger
+1. Commit and push any code change to the `main` branch:
+   ```bash
+   git add .
+   git commit -m "feat: enhance investment risk analysis"
+   git push origin main
+   ```
+2. GitHub sends a webhook POST request to Jenkins.
+3. Jenkins automatically initiates a new build and reports live status.
+
+#### Manual Trigger
+1. In Jenkins, open the **AI-Investment-Research-Agent** pipeline job.
+2. Click **Build with Parameters** in the left sidebar.
+3. Specify parameters:
+   - `BRANCH_NAME`: `main`
+   - `DEPLOY_TO_EC2`: `true`
+   - `EC2_DEPLOY_PATH`: `/home/ubuntu/ai-investment-research-agent`
+4. Click **Build**.
+
+---
+
+### 7. Verification & Health Checks
+
+After deployment, the pipeline automatically executes [`scripts/healthcheck.sh`](./scripts/healthcheck.sh) on the EC2 host. You can also manually test:
+
+```bash
+# Test Express Backend health endpoint
+curl -i http://<EC2_PUBLIC_IP>:5000/
+
+# Expected response:
+# HTTP/1.1 200 OK
+# {"success":true,"message":"AI Investment Research API is running"}
+
+# Test Frontend HTTP status
+curl -i http://<EC2_PUBLIC_IP>:5173/
+```
+
+Access the full UI in your browser: `http://<EC2_PUBLIC_IP>:5173`
+
+---
+
+### 8. Troubleshooting Guide
+
+#### Problem 1: `Host key verification failed` during SSH
+- **Cause**: Jenkins does not recognize the EC2 SSH host key fingerprint.
+- **Solution**: The pipeline uses `-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null`. If connecting manually, run `ssh-keyscan -H <EC2_HOST> >> ~/.ssh/known_hosts` on the Jenkins agent.
+
+#### Problem 2: `Permission denied (publickey)`
+- **Cause**: Incorrect SSH username or key format in `ec2-ssh-key`.
+- **Solution**: Ensure the credential username matches the OS AMI (`ubuntu` for Ubuntu, `ec2-user` for Amazon Linux) and the private `.pem` key begins with `-----BEGIN OPENSSH PRIVATE KEY-----` or `-----BEGIN RSA PRIVATE KEY-----`.
+
+#### Problem 3: Backend container exits with `MongooseServerSelectionError`
+- **Cause**: MongoDB Atlas blocked the connection.
+- **Solution**: Go to MongoDB Atlas > **Network Access** > **Add IP Address** > Add your EC2 Public IP (`<EC2_HOST>/32`).
+
+#### Problem 4: `GEMINI_API_KEY` missing error
+- **Cause**: Credential was not bound or is empty in Jenkins.
+- **Solution**: Check Jenkins Credentials to verify `GEMINI_API_KEY` is present as a Secret Text and matches the Google AI Studio key.
+
+#### Problem 5: Frontend shows `Network Error` or cannot connect to backend
+- **Cause**: `VITE_API_URL` is pointing to `localhost` instead of the public EC2 address, or port 5000 is blocked in the AWS Security Group.
+- **Solution**: Set Jenkins credential `VITE_API_URL=http://<EC2_PUBLIC_IP>:5000/api` and confirm inbound TCP port 5000 is open in the AWS Security Group.
 
 ------------------------------------------------------------------------
 
