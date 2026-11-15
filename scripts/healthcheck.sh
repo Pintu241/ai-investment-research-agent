@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# ==============================================================================
-# Health Check Verification Script for AI Investment Research Agent
-# ==============================================================================
 set -e
 
 BACKEND_URL="${BACKEND_URL:-http://localhost:5000/}"
@@ -62,4 +59,3 @@ echo "=========================================================="
 echo " [PASSED] All services are HEALTHY and verified operational!"
 echo "=========================================================="
 exit 0
-

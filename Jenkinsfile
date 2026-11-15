@@ -122,7 +122,6 @@ pipeline {
                             set -e
                             cd ${params.EC2_DEPLOY_PATH}
 
-                            # Create secure root .env for Docker Compose
                             cat << 'EOF' > .env
 PORT=5000
 MONGO_URI=${MONGO_URI}
@@ -132,10 +131,8 @@ VITE_API_URL=${VITE_API_URL}
 EOF
                             chmod 600 .env
 
-                            # Ensure scripts are executable
                             chmod +x scripts/*.sh
 
-                            # Execute the deploy script
                             bash scripts/deploy.sh
 REMOTE_DEPLOY_EOF
 

@@ -14,14 +14,12 @@ function CompanySearch({ currentUser, onLogout }) {
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("research");
 
-  // New state variables for buttons/navigation
   const [historyList, setHistoryList] = useState([]);
-  const [activeSidebar, setActiveSidebar] = useState("new"); // "new", "history", "saved"
+  const [activeSidebar, setActiveSidebar] = useState("new");
   const [showAbout, setShowAbout] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
-  // Load history on mount
   useEffect(() => {
     fetchHistory();
   }, []);
@@ -75,11 +73,9 @@ function CompanySearch({ currentUser, onLogout }) {
     try {
       const response = await toggleSaveResearch(id);
       if (response && response.success) {
-        // Update local history
         setHistoryList(prev =>
           prev.map(item => item._id === id ? { ...item, saved: response.data.saved } : item)
         );
-        // If current report is this one, update its saved status
         if (result && result._id === id) {
           setResult(prev => ({ ...prev, saved: response.data.saved }));
         }
@@ -138,7 +134,6 @@ function CompanySearch({ currentUser, onLogout }) {
 
   const currentTab = tabs[activeTab];
 
-  // Derive realistic numeric scores from textual analysis when explicit scores are missing
   const computeScores = (res) => {
     const clamp = (v) => Math.max(0, Math.min(100, Math.round(v)));
     if (!res) return { businessScore: 50, financialScore: 50, newsScore: 50, riskScore: 50 };
@@ -149,7 +144,6 @@ function CompanySearch({ currentUser, onLogout }) {
       return terms.reduce((acc, t) => acc + (s.includes(t) ? 1 : 0), 0);
     };
 
-    // Base values
     let business = typeof res.businessScore === "number" ? res.businessScore : 50;
     let financial = typeof res.financialScore === "number" ? res.financialScore : 50;
     let news = typeof res.newsScore === "number" ? res.newsScore : 50;
@@ -175,10 +169,9 @@ function CompanySearch({ currentUser, onLogout }) {
 
     if (typeof res.riskScore !== "number") {
       const matches = getMatches(res.riskAnalysis, ["risk", "concern", "issue", "exposure", "uncertain", "volatile", "debt", "lawsuit", "regulator"]);
-      risk = 50 + matches * 12; // more matches -> higher risk
+      risk = 50 + matches * 12;
     }
 
-    // Slightly adjust with decision/confidence if present
     if (res.decision === "INVEST") {
       business += 8; financial += 6; news += 4; risk -= 8;
     }
@@ -200,7 +193,6 @@ function CompanySearch({ currentUser, onLogout }) {
 
   const computedScores = computeScores(result);
 
-  // Filter lists
   const displayList = activeSidebar === "saved" 
     ? historyList.filter(item => item.saved) 
     : historyList;

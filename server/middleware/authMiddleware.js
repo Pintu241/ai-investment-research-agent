@@ -12,13 +12,8 @@ export const protect = async (req, res, next) => {
     try {
       await connectDB();
       
-      // Get token from header
       token = req.headers.authorization.split(" ")[1];
-
-      // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback_secret_key_123");
-
-      // Get user from the token and attach to req
       req.user = await User.findById(decoded.id).select("-password");
 
       if (!req.user) {

@@ -21,7 +21,6 @@ export const signup = async (req, res) => {
       });
     }
 
-    // Check if user already exists
     const userExists = await User.findOne({ email });
 
     if (userExists) {
@@ -31,7 +30,6 @@ export const signup = async (req, res) => {
       });
     }
 
-    // Create user
     const user = await User.create({
       name,
       email,
@@ -78,7 +76,6 @@ export const login = async (req, res) => {
       });
     }
 
-    // Find user
     const user = await User.findOne({ email });
 
     if (user && (await user.comparePassword(password))) {
@@ -110,7 +107,6 @@ export const login = async (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
-    // req.user is set by the protect middleware
     return res.status(200).json({
       success: true,
       data: req.user
