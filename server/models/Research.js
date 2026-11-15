@@ -95,7 +95,7 @@ const researchSchema = new mongoose.Schema(
     }
 );
 
-const Research = mongoose.model(
+const Research = mongoose.models.Research || mongoose.model(
     "Research",
     researchSchema
 );

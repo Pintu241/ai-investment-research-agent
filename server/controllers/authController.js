@@ -57,7 +57,7 @@ export const signup = async (req, res) => {
     console.error("Signup error:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error during registration",
+      message: error.message || "Server error during registration",
       error: error.message
     });
   }
@@ -99,7 +99,7 @@ export const login = async (req, res) => {
     console.error("Login error:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error during login",
+      message: error.message || "Server error during login",
       error: error.message
     });
   }

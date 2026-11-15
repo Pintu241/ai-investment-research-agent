@@ -53,6 +53,7 @@ function Auth({ onAuthSuccess }) {
       console.error("Auth error:", err);
       setError(
         err.response?.data?.message || 
+        err.response?.data?.error || 
         "Something went wrong. Please check your connection."
       );
     } finally {
