@@ -934,7 +934,7 @@ The declarative pipeline is defined in [`Jenkinsfile`](./Jenkinsfile) and execut
    - Synchronizes application code and Docker configurations via `rsync`.
    - Generates a production `.env` file on the remote host with restricted permissions (`chmod 600`).
    - Restarts containers using `docker compose up -d --build --remove-orphans`.
-   - Executes [`scripts/healthcheck.sh`](./scripts/healthcheck.sh) to verify `HTTP 200` on both backend (`:5000/`) and frontend (`:5173/`).
+   - Verifies container health and connectivity directly on the host (`curl http://localhost:5000/`).
 
 ---
 
@@ -989,49 +989,35 @@ Navigate to **Manage Jenkins** > **Credentials** > **System** > **Global credent
 
 ---
 
-### 5. AWS EC2 Setup & Provisioning
+### 5. AWS EC2 Provisioning via Terraform
 
-#### A. Recommended Instance Specifications
-- **Instance Type**: `t3.medium` or `t3.large` (2 vCPU, 4GB+ RAM recommended for running parallel Docker builds and AI Node services).
-- **Operating System**: Ubuntu 22.04 LTS (HVM) or Amazon Linux 2023.
-- **Storage**: Minimum 20 GB gp3 SSD.
+A dedicated [`terraform/`](./terraform) directory is provided to provision the entire AWS infrastructure automatically.
 
-#### B. EC2 Security Group Configuration
-In the AWS Management Console under **EC2** > **Security Groups**, configure the inbound rules:
-
-| Type | Protocol | Port Range | Source | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| **SSH** | TCP | `22` | `<Your_Jenkins_IP>/32` (or Admin IP) | Secure remote deployment access |
-| **Custom TCP** | TCP | `5000` | `0.0.0.0/0` | Backend API (Express.js REST endpoints) |
-| **Custom TCP** | TCP | `5173` | `0.0.0.0/0` | Frontend Web UI (React + Vite) |
-| **HTTP** *(optional)* | TCP | `80` | `0.0.0.0/0` | HTTP traffic (if running Nginx reverse proxy) |
-
-#### C. Initial Server Preparation on EC2
-Log in to your EC2 instance once to configure Docker permissions:
-
+#### A. Provisioning Infrastructure with Terraform
 ```bash
-# 1. Update and install Docker + Docker Compose + rsync
-sudo apt update -y && sudo apt upgrade -y
-sudo apt install -y ca-certificates curl gnupg lsb-release rsync
+cd terraform
 
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+# 1. Prepare configuration variables
+cp terraform.tfvars.example terraform.tfvars
 
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+# 2. Update key_name with your AWS keypair name
+# e.g., key_name = "my-aws-keypair"
 
-sudo apt update -y
-sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-
-# 2. Grant ubuntu user non-root Docker privileges
-sudo usermod -aG docker ubuntu
-newgrp docker
-
-# 3. Create target deployment directory
-mkdir -p /home/ubuntu/ai-investment-research-agent
+# 3. Initialize and apply infrastructure
+terraform init
+terraform plan
+terraform apply -auto-approve
 ```
 
+The Terraform automation performs the following:
+- Finds the latest official Ubuntu 22.04 LTS AMI.
+- Configures security group ingress rules for ports `22` (SSH), `5000` (Backend API), `5173` (Frontend Web UI), `80`, and `443`.
+- Provisions a `t3.medium` instance with 25 GB gp3 SSD storage.
+- Automatically executes `user_data` during launch to install Docker Engine, Docker Compose plugin, and rsync, granting the `ubuntu` user non-root Docker privileges.
+- Outputs the instance Public IP, Public DNS, and SSH connection string.
+
 > [!IMPORTANT]
-> Ensure your EC2 Elastic/Public IP is added to the **MongoDB Atlas Network Access IP Whitelist** so the backend container can reach the database.
+> Ensure the generated EC2 Public IP is added to the **MongoDB Atlas Network Access IP Whitelist** so the backend container can reach the database.
 
 ---
 
@@ -1060,7 +1046,7 @@ mkdir -p /home/ubuntu/ai-investment-research-agent
 
 ### 7. Verification & Health Checks
 
-After deployment, the pipeline automatically executes [`scripts/healthcheck.sh`](./scripts/healthcheck.sh) on the EC2 host. You can also manually test:
+After deployment, the pipeline automatically checks container health on the EC2 host. You can also manually test:
 
 ```bash
 # Test Express Backend health endpoint

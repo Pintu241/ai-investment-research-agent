@@ -107,7 +107,7 @@ pipeline {
                         SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${SSH_KEY}"
 
                         echo "Creating deployment directory on EC2 at ${params.EC2_DEPLOY_PATH}..."
-                        ssh ${SSH_OPTS} ${SSH_USER}@${EC2_HOST} "mkdir -p ${params.EC2_DEPLOY_PATH}/scripts"
+                        ssh ${SSH_OPTS} ${SSH_USER}@${EC2_HOST} "mkdir -p ${params.EC2_DEPLOY_PATH}"
 
                         echo "Transferring project files to EC2..."
                         rsync -avz -e "ssh ${SSH_OPTS}" \
@@ -115,6 +115,7 @@ pipeline {
                             --exclude '.git' \
                             --exclude '.env' \
                             --exclude 'dist' \
+                            --exclude 'terraform' \
                             ./ ${SSH_USER}@${EC2_HOST}:${params.EC2_DEPLOY_PATH}/
 
                         echo "Setting up production environment and restarting containers on EC2..."
@@ -131,9 +132,11 @@ VITE_API_URL=${VITE_API_URL}
 EOF
                             chmod 600 .env
 
-                            chmod +x scripts/*.sh
+                            docker compose up -d --build --remove-orphans
+                            docker compose ps
 
-                            bash scripts/deploy.sh
+                            sleep 15
+                            curl -f http://localhost:5000/ || exit 1
 REMOTE_DEPLOY_EOF
 
                         echo "Post-deployment verification passed!"
