@@ -1,5 +1,19 @@
 import { useState } from "react";
 import { loginUser, signupUser } from "../services/api";
+import { 
+  TrendingUp, 
+  ShieldCheck, 
+  Lock, 
+  Mail, 
+  User, 
+  ArrowRight, 
+  Eye, 
+  EyeOff, 
+  CheckCircle2, 
+  BarChart3,
+  Briefcase,
+  FileText
+} from "lucide-react";
 
 function Auth({ onAuthSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -7,6 +21,7 @@ function Auth({ onAuthSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -15,21 +30,21 @@ function Auth({ onAuthSuccess }) {
     setError("");
 
     if (!email.trim() || !password.trim()) {
-      setError("Please fill out email and password fields");
+      setError("Please provide both email and password.");
       return;
     }
 
     if (!isLogin) {
       if (!name.trim()) {
-        setError("Please enter your name");
+        setError("Please enter your full name.");
         return;
       }
       if (password !== confirmPassword) {
-        setError("Passwords do not match");
+        setError("Passwords do not match.");
         return;
       }
       if (password.length < 6) {
-        setError("Password must be at least 6 characters long");
+        setError("Password must be at least 6 characters long.");
         return;
       }
     }
@@ -54,7 +69,7 @@ function Auth({ onAuthSuccess }) {
       setError(
         err.response?.data?.message || 
         err.response?.data?.error || 
-        "Something went wrong. Please check your connection."
+        "Authentication failed. Please verify your connection."
       );
     } finally {
       setLoading(false);
@@ -71,207 +86,191 @@ function Auth({ onAuthSuccess }) {
   };
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#f7f9fc",
-      display: "grid",
-      placeItems: "center",
-      fontFamily: "Inter, sans-serif"
-    }}>
-      <div style={{
-        width: "min(400px, calc(100% - 32px))",
-        background: "#ffffff",
-        border: "1px solid #e2e7ee",
-        borderRadius: "10px",
-        padding: "32px",
-        boxShadow: "0 4px 16px rgba(31, 45, 61, 0.05)"
-      }}>
-        {/* Brand/Logo Header */}
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "10px",
-          marginBottom: "24px"
-        }}>
-          <div style={{
-            width: "36px",
-            height: "36px",
-            borderRadius: "7px",
-            background: "#2468d8",
-            color: "#ffffff",
-            display: "grid",
-            placeItems: "center",
-            fontWeight: "800",
-            fontSize: "18px"
-          }}>↗</div>
-          <strong style={{ fontSize: "20px", color: "#172033", letterSpacing: "-0.02em" }}>Investment Research</strong>
-        </div>
-
-        {/* Tab switchers */}
-        <div style={{
-          display: "flex",
-          borderBottom: "1px solid #e7ebf0",
-          marginBottom: "24px"
-        }}>
-          <button
-            type="button"
-            onClick={() => handleTabChange(true)}
-            style={{
-              flex: "1",
-              padding: "10px 0",
-              background: "transparent",
-              border: "0",
-              borderBottom: isLogin ? "2px solid #2468d8" : "2px solid transparent",
-              color: isLogin ? "#2468d8" : "#68758a",
-              fontWeight: "600",
-              fontSize: "13px",
-              cursor: "pointer"
-            }}
-          >
-            Login
-          </button>
-          <button
-            type="button"
-            onClick={() => handleTabChange(false)}
-            style={{
-              flex: "1",
-              padding: "10px 0",
-              background: "transparent",
-              border: "0",
-              borderBottom: !isLogin ? "2px solid #2468d8" : "2px solid transparent",
-              color: !isLogin ? "#2468d8" : "#68758a",
-              fontWeight: "600",
-              fontSize: "13px",
-              cursor: "pointer"
-            }}
-          >
-            Sign Up
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          {!isLogin && (
-            <div>
-              <label htmlFor="auth-name" style={{ display: "block", fontSize: "11px", fontWeight: "700", color: "#68758a", textTransform: "uppercase", marginBottom: "6px" }}>Full Name</label>
-              <input
-                id="auth-name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="John Doe"
-                style={{
-                  width: "100%",
-                  padding: "10px 12px",
-                  border: "1px solid #d7dee8",
-                  borderRadius: "6px",
-                  fontSize: "13px",
-                  outline: "none",
-                  background: "#ffffff",
-                  color: "#1d2738"
-                }}
-              />
+    <div className="portal-auth-wrapper">
+      <div className="portal-auth-container">
+        {/* Left Side: Institutional Overview */}
+        <div className="portal-showcase-pane">
+          <div className="portal-header-brand">
+            <div className="portal-logo-square">
+              <TrendingUp size={22} strokeWidth={2.5} />
             </div>
-          )}
-
-          <div>
-            <label htmlFor="auth-email" style={{ display: "block", fontSize: "11px", fontWeight: "700", color: "#68758a", textTransform: "uppercase", marginBottom: "6px" }}>Email Address</label>
-            <input
-              id="auth-email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@company.com"
-              style={{
-                  width: "100%",
-                  padding: "10px 12px",
-                  border: "1px solid #d7dee8",
-                  borderRadius: "6px",
-                  fontSize: "13px",
-                  outline: "none",
-                  background: "#ffffff",
-                  color: "#1d2738"
-                }}
-            />
+            <div>
+              <div className="portal-brand-title">APEX RESEARCH</div>
+              <div className="portal-brand-tag">GLOBAL EQUITY INTELLIGENCE</div>
+            </div>
           </div>
 
-          <div>
-            <label htmlFor="auth-password" style={{ display: "block", fontSize: "11px", fontWeight: "700", color: "#68758a", textTransform: "uppercase", marginBottom: "6px" }}>Password</label>
-            <input
-              id="auth-password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              style={{
-                  width: "100%",
-                  padding: "10px 12px",
-                  border: "1px solid #d7dee8",
-                  borderRadius: "6px",
-                  fontSize: "13px",
-                  outline: "none",
-                  background: "#ffffff",
-                  color: "#1d2738"
-                }}
-            />
-          </div>
-
-          {!isLogin && (
-            <div>
-              <label htmlFor="auth-confirm-password" style={{ display: "block", fontSize: "11px", fontWeight: "700", color: "#68758a", textTransform: "uppercase", marginBottom: "6px" }}>Confirm Password</label>
-              <input
-                id="auth-confirm-password"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                style={{
-                  width: "100%",
-                  padding: "10px 12px",
-                  border: "1px solid #d7dee8",
-                  borderRadius: "6px",
-                  fontSize: "13px",
-                  outline: "none",
-                  background: "#ffffff",
-                  color: "#1d2738"
-                }}
-              />
-            </div>
-          )}
-
-          {error && (
-              <p style={{
-              margin: "0",
-              color: "#b42318",
-              fontSize: "12px",
-              background: "#fff7f6",
-              border: "1px solid #f1d0ce",
-              padding: "8px 12px",
-              borderRadius: "5px"
-            }}>
-              {error}
+          <div className="portal-showcase-body">
+            <h1 className="portal-headline">
+              Institutional Equity Research & Company Valuation
+            </h1>
+            <p className="portal-description">
+              Access comprehensive fundamental research, competitive moat analysis, balance sheet ratios, and structured investment recommendations across global equities.
             </p>
-          )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              padding: "11px 0",
-              border: "0",
-              borderRadius: "6px",
-              background: "#2468d8",
-              color: "#ffffff",
-              fontWeight: "700",
-              fontSize: "13px",
-              cursor: "pointer",
-              marginTop: "8px",
-              opacity: loading ? "0.75" : "1"
-            }}
-          >
-            {loading ? "Please wait..." : isLogin ? "Login" : "Sign Up"}
-          </button>
-        </form>
+            <div className="portal-feature-list">
+              <div className="portal-feature-item">
+                <div className="portal-feature-icon">
+                  <BarChart3 size={18} />
+                </div>
+                <div>
+                  <strong>Fundamental & Financial Statement Analysis</strong>
+                  <p>In-depth evaluation of earnings quality, margin trajectory, and solvency ratios.</p>
+                </div>
+              </div>
+
+              <div className="portal-feature-item">
+                <div className="portal-feature-icon">
+                  <Briefcase size={18} />
+                </div>
+                <div>
+                  <strong>Disciplined Coverage Framework</strong>
+                  <p>Systematic BUY, HOLD, and SELL ratings backed by qualitative thesis and conviction scoring.</p>
+                </div>
+              </div>
+
+              <div className="portal-feature-item">
+                <div className="portal-feature-icon">
+                  <FileText size={18} />
+                </div>
+                <div>
+                  <strong>Proprietary Research Archive</strong>
+                  <p>Maintain your custom watchlists, export publication-ready reports, and track coverage changes.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="portal-showcase-footer">
+            <div className="portal-compliance-tag">
+              <ShieldCheck size={14} />
+              <span>Standard Institutional Compliance & Privacy</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side: Account Form */}
+        <div className="portal-form-pane">
+          <div className="portal-form-header">
+            <h2>{isLogin ? "Analyst Portal Sign In" : "Register Analyst Account"}</h2>
+            <p>
+              {isLogin 
+                ? "Enter your credentials to access company coverage and research reports." 
+                : "Create an analyst profile to begin reviewing company fundamentals."}
+            </p>
+          </div>
+
+          {/* Tab Selector */}
+          <div className="portal-tabs">
+            <button
+              type="button"
+              className={`portal-tab-btn ${isLogin ? "active" : ""}`}
+              onClick={() => handleTabChange(true)}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              className={`portal-tab-btn ${!isLogin ? "active" : ""}`}
+              onClick={() => handleTabChange(false)}
+            >
+              Create Account
+            </button>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="portal-form">
+            {error && (
+              <div className="portal-error-banner">
+                <span>{error}</span>
+              </div>
+            )}
+
+            {!isLogin && (
+              <div className="portal-field">
+                <label>Full Name</label>
+                <div className="portal-input-wrap">
+                  <User size={18} className="portal-field-icon" />
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Michael Chen"
+                    required={!isLogin}
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="portal-field">
+              <label>Work Email</label>
+              <div className="portal-input-wrap">
+                <Mail size={18} className="portal-field-icon" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="analyst@firm.com"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="portal-field">
+              <label>Password</label>
+              <div className="portal-input-wrap">
+                <Lock size={18} className="portal-field-icon" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  className="portal-password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label="Toggle password visibility"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            {!isLogin && (
+              <div className="portal-field">
+                <label>Confirm Password</label>
+                <div className="portal-input-wrap">
+                  <Lock size={18} className="portal-field-icon" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required={!isLogin}
+                  />
+                </div>
+              </div>
+            )}
+
+            <button type="submit" className="portal-submit-btn" disabled={loading}>
+              {loading ? (
+                <div className="portal-spinner" />
+              ) : (
+                <>
+                  <span>{isLogin ? "Sign In to Research Platform" : "Complete Registration"}</span>
+                  <ArrowRight size={17} />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="portal-footer-note">
+            <CheckCircle2 size={13} color="#059669" />
+            <span>Encrypted Session • SEC & FINRA Formatted Research</span>
+          </div>
+        </div>
       </div>
     </div>
   );

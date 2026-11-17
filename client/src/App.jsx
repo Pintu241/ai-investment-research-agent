@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import CompanySearch from "./components/CompanySearch";
 import Auth from "./components/Auth";
 import { getCurrentUser } from "./services/api";
+import "./components/CompanySearch.css";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -52,11 +53,14 @@ function App() {
         minHeight: "100vh",
         display: "grid",
         placeItems: "center",
-        background: "#f7f9fc",
-        fontFamily: "Inter, sans-serif",
-        color: "#647084"
+        background: "#f8fafc",
+        fontFamily: "'Inter', sans-serif",
+        color: "#334155"
       }}>
-        <p>Loading application session...</p>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "14px" }}>
+          <div className="portal-spinner" style={{ width: "28px", height: "28px", borderWidth: "3px", borderColor: "#cbd5e1", borderTopColor: "#1d4ed8" }} />
+          <p style={{ fontSize: "13px", fontWeight: "600", color: "#64748b" }}>Loading Research Platform...</p>
+        </div>
       </div>
     );
   }
