@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { loginUser, signupUser } from "../services/api";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   TrendingUp, 
   TrendingDown,
@@ -13,20 +14,26 @@ import {
   CheckCircle2, 
   Globe,
   Award,
+  BarChart3,
   Building2,
-  Check
+  DollarSign,
+  ChevronRight,
+  Activity,
+  Zap,
+  Sparkles
 } from "lucide-react";
 
 const TICKER_DATA = [
   { symbol: "S&P 500", price: "5,892.40", change: "+0.82%", up: true },
   { symbol: "NASDAQ", price: "18,945.20", change: "+1.41%", up: true },
   { symbol: "DOW JONES", price: "43,870.10", change: "+0.45%", up: true },
+  { symbol: "NVIDIA (NVDA)", price: "$141.50", change: "+3.24%", up: true },
+  { symbol: "APPLE (AAPL)", price: "$232.80", change: "+1.12%", up: true },
   { symbol: "GOLD", price: "$2,694.10", change: "+0.62%", up: true },
   { symbol: "BRENT CRUDE", price: "$74.20", change: "-0.38%", up: false },
   { symbol: "US 10Y", price: "4.38%", change: "-0.04%", up: false },
   { symbol: "EUR/USD", price: "1.0542", change: "+0.15%", up: true },
-  { symbol: "FTSE 100", price: "8,420.15", change: "+0.35%", up: true },
-  { symbol: "NIKKEI 225", price: "38,720.50", change: "+0.94%", up: true }
+  { symbol: "FTSE 100", price: "8,420.15", change: "+0.35%", up: true }
 ];
 
 function Auth({ onAuthSuccess }) {
@@ -84,7 +91,7 @@ function Auth({ onAuthSuccess }) {
       setError(
         err.response?.data?.message || 
         err.response?.data?.error || 
-        "Authentication failed. Please check your network connection."
+        "Authentication failed. Please verify your connection."
       );
     } finally {
       setLoading(false);
@@ -101,204 +108,373 @@ function Auth({ onAuthSuccess }) {
   };
 
   return (
-    <div className="luxury-auth-page">
-      {/* Ambient background light gradients */}
-      <div className="luxury-ambient-mesh luxury-mesh-top" />
-      <div className="luxury-ambient-mesh luxury-mesh-bottom" />
-      <div className="luxury-noise-overlay" />
+    <div className="premium-auth-viewport">
+      {/* Dynamic Animated Ambient Gradients */}
+      <motion.div 
+        className="ambient-orb orb-primary"
+        animate={{
+          x: [0, 40, -20, 0],
+          y: [0, -30, 20, 0],
+          scale: [1, 1.08, 0.95, 1]
+        }}
+        transition={{
+          duration: 16,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <motion.div 
+        className="ambient-orb orb-secondary"
+        animate={{
+          x: [0, -50, 30, 0],
+          y: [0, 40, -20, 0],
+          scale: [1, 0.92, 1.1, 1]
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <div className="ambient-grid-overlay" />
 
-      {/* TOP LIVE FINANCIAL TICKER MARQUEE */}
-      <div className="luxury-ticker-bar">
-        <div className="ticker-badge-live">
-          <span className="ticker-live-dot" />
-          <span>MARKET TICKER</span>
+      {/* TOP LIVE FINANCIAL TICKER */}
+      <div className="premium-ticker-ribbon">
+        <div className="ticker-label-chip">
+          <span className="live-pulsar" />
+          <span>GLOBAL MARKETS</span>
         </div>
-        <div className="ticker-track">
+        <div className="ticker-infinite-track">
           {[...TICKER_DATA, ...TICKER_DATA].map((t, idx) => (
-            <div key={idx} className="ticker-item">
-              <span className="ticker-symbol">{t.symbol}</span>
-              <span className="ticker-price">{t.price}</span>
-              <span className={`ticker-change ${t.up ? "positive" : "negative"}`}>
+            <div key={idx} className="ticker-capsule">
+              <span className="capsule-sym">{t.symbol}</span>
+              <span className="capsule-val">{t.price}</span>
+              <span className={`capsule-delta ${t.up ? "bull" : "bear"}`}>
                 {t.change} {t.up ? "▲" : "▼"}
               </span>
-              <span className="ticker-separator">•</span>
+              <span className="capsule-sep">•</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* CENTERPIECE LUXURY AUTHENTICATION CARD */}
-      <div className="luxury-auth-wrapper">
-        <div className="luxury-card-container">
-          {/* Card Brand Header */}
-          <div className="luxury-brand-block">
-            <div className="luxury-brand-crest">
-              <div className="crest-inner-icon">
-                <TrendingUp size={22} strokeWidth={2.5} />
-              </div>
+      {/* EXPANSIVE 2-COLUMN LUXURY STAGE */}
+      <div className="premium-auth-stage">
+        {/* LEFT COLUMN: INTERACTIVE INSTITUTIONAL SHOWCASE */}
+        <motion.div 
+          className="stage-left-showcase"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <div className="showcase-brand-lockup">
+            <div className="brand-crest-emblem">
+              <TrendingUp size={24} strokeWidth={2.5} />
             </div>
-            <h1 className="luxury-brand-title">A P E X</h1>
-            <span className="luxury-brand-subtitle">GLOBAL EQUITY RESEARCH & ASSET VALUATION</span>
+            <div>
+              <div className="brand-firm-title">APEX RESEARCH</div>
+              <div className="brand-firm-division">INSTITUTIONAL EQUITY INTELLIGENCE</div>
+            </div>
           </div>
 
-          <div className="luxury-welcome-text">
-            <h2>{isLogin ? "Analyst Portal Access" : "Create Institutional Account"}</h2>
+          <div className="showcase-hero-copy">
+            <h2>Next-Generation Equity Research & Valuation</h2>
             <p>
-              {isLogin
-                ? "Sign in to access your firm's private equity coverage, company valuation models, and ratings."
-                : "Register your analyst profile to access institutional equity research and custom watchlists."}
+              Autonomous fundamental coverage, moat durability analytics, and institutional consensus ratings compiled across 1,800+ global assets.
             </p>
           </div>
 
-          {/* Classy Switcher Pill */}
-          <div className="luxury-segmented-control">
-            <button
-              type="button"
-              className={`segmented-btn ${isLogin ? "active" : ""}`}
-              onClick={() => handleTabChange(true)}
+          {/* FLOATING INTERACTIVE CARDS */}
+          <div className="floating-cards-stack">
+            {/* Asset Focus Card */}
+            <motion.div 
+              className="glass-preview-card"
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             >
-              Sign In
-            </button>
-            <button
-              type="button"
-              className={`segmented-btn ${!isLogin ? "active" : ""}`}
-              onClick={() => handleTabChange(false)}
+              <div className="card-top-row">
+                <div className="ticker-avatar">NVDA</div>
+                <div>
+                  <strong>NVIDIA Corporation</strong>
+                  <span>NASDAQ: NVDA • Semiconductor & AI</span>
+                </div>
+                <div className="rating-pill-outperform">OUTPERFORM</div>
+              </div>
+              <div className="card-metrics-row">
+                <div>
+                  <small>ANALYST TARGET</small>
+                  <strong>$168.00</strong>
+                </div>
+                <div>
+                  <small>CONVICTION</small>
+                  <strong className="text-emerald">94%</strong>
+                </div>
+                <div>
+                  <small>MOAT INDEX</small>
+                  <strong>92 / 100</strong>
+                </div>
+              </div>
+              {/* Mini SVG Sparkline */}
+              <div className="sparkline-wrapper">
+                <svg viewBox="0 0 280 40" className="sparkline-svg">
+                  <path
+                    d="M 0 35 Q 40 25, 70 28 T 140 18 T 210 12 T 280 5"
+                    fill="none"
+                    stroke="#10b981"
+                    strokeWidth="2.5"
+                  />
+                  <path
+                    d="M 0 35 Q 40 25, 70 28 T 140 18 T 210 12 T 280 5 L 280 40 L 0 40 Z"
+                    fill="url(#sparkline-grad)"
+                    opacity="0.2"
+                  />
+                  <defs>
+                    <linearGradient id="sparkline-grad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10b981" />
+                      <stop offset="100%" stopColor="transparent" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+            </motion.div>
+
+            {/* Quick Stats Pill */}
+            <motion.div 
+              className="glass-preview-pill"
+              animate={{ y: [0, 6, 0] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
             >
-              Register Account
-            </button>
+              <div className="pill-icon-box">
+                <Activity size={16} color="#3b82f6" />
+              </div>
+              <div>
+                <strong>$48.6B Coverage Monitored</strong>
+                <span>Continuous 10-K & earnings sentiment tracking</span>
+              </div>
+            </motion.div>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="luxury-form">
-            {error && (
-              <div className="luxury-alert-box">
-                <span>{error}</span>
-              </div>
-            )}
+          <div className="showcase-footer-proof">
+            <div className="proof-tag">
+              <Shield size={14} color="#10b981" />
+              <span>Enterprise Grade 256-Bit Financial Encryption</span>
+            </div>
+          </div>
+        </motion.div>
 
-            {!isLogin && (
-              <div className="luxury-input-group">
-                <label className="luxury-label">FULL NAME</label>
-                <div className="luxury-input-wrap">
-                  <User size={17} className="luxury-field-icon" />
+        {/* RIGHT COLUMN: THE ULTRA-SLEEK TERMINAL CARD */}
+        <motion.div 
+          className="stage-right-card"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
+        >
+          <div className="terminal-card-glass">
+            {/* Header */}
+            <div className="terminal-card-header">
+              <div className="mobile-brand-crest">
+                <TrendingUp size={20} strokeWidth={2.5} />
+              </div>
+              <h2>{isLogin ? "Terminal Sign In" : "Register Analyst Profile"}</h2>
+              <p>
+                {isLogin
+                  ? "Access your firm's private research models and coverage watchlists."
+                  : "Begin evaluating company valuations with institutional consensus."}
+              </p>
+            </div>
+
+            {/* FRAMER MOTION SLIDING PILL SWITCHER */}
+            <div className="framer-segmented-track">
+              <button
+                type="button"
+                className={`framer-tab-btn ${isLogin ? "selected" : ""}`}
+                onClick={() => handleTabChange(true)}
+              >
+                {isLogin && (
+                  <motion.div
+                    className="framer-active-pill"
+                    layoutId="activeTabPill"
+                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                  />
+                )}
+                <span className="tab-btn-text">Sign In</span>
+              </button>
+
+              <button
+                type="button"
+                className={`framer-tab-btn ${!isLogin ? "selected" : ""}`}
+                onClick={() => handleTabChange(false)}
+              >
+                {!isLogin && (
+                  <motion.div
+                    className="framer-active-pill"
+                    layoutId="activeTabPill"
+                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                  />
+                )}
+                <span className="tab-btn-text">Create Account</span>
+              </button>
+            </div>
+
+            {/* FORM */}
+            <form onSubmit={handleSubmit} className="terminal-form">
+              <AnimatePresence mode="wait">
+                {error && (
+                  <motion.div 
+                    className="form-alert-banner"
+                    initial={{ opacity: 0, height: 0, y: -10 }}
+                    animate={{ opacity: 1, height: "auto", y: 0 }}
+                    exit={{ opacity: 0, height: 0, y: -10 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <span>{error}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Dynamic Name Input for Signup */}
+              <AnimatePresence>
+                {!isLogin && (
+                  <motion.div 
+                    className="form-input-block"
+                    initial={{ opacity: 0, height: 0, y: -12 }}
+                    animate={{ opacity: 1, height: "auto", y: 0 }}
+                    exit={{ opacity: 0, height: 0, y: -12 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <label>FULL LEGAL NAME</label>
+                    <div className="input-glass-wrap">
+                      <User size={16} className="input-lead-icon" />
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="e.g. Jordan Belfort"
+                        required={!isLogin}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <div className="form-input-block">
+                <label>INSTITUTIONAL EMAIL</label>
+                <div className="input-glass-wrap">
+                  <Mail size={16} className="input-lead-icon" />
                   <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Alexander Vance"
-                    required={!isLogin}
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="analyst@firm.com"
+                    required
                   />
                 </div>
               </div>
-            )}
 
-            <div className="luxury-input-group">
-              <label className="luxury-label">WORK EMAIL ADDRESS</label>
-              <div className="luxury-input-wrap">
-                <Mail size={17} className="luxury-field-icon" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="analyst@firm.com"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="luxury-input-group">
-              <div className="luxury-label-split">
-                <label className="luxury-label">SECURITY PASSWORD</label>
-                {isLogin && (
-                  <span className="luxury-forgot-link">Forgot password?</span>
-                )}
-              </div>
-              <div className="luxury-input-wrap">
-                <Lock size={17} className="luxury-field-icon" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  required
-                />
-                <button
-                  type="button"
-                  className="luxury-eye-btn"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label="Toggle password visibility"
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-            </div>
-
-            {!isLogin && (
-              <div className="luxury-input-group">
-                <label className="luxury-label">CONFIRM SECURITY PASSWORD</label>
-                <div className="luxury-input-wrap">
-                  <Lock size={17} className="luxury-field-icon" />
+              <div className="form-input-block">
+                <div className="input-label-row">
+                  <label>PASSWORD</label>
+                  {isLogin && (
+                    <span className="forgot-text-link">Forgot password?</span>
+                  )}
+                </div>
+                <div className="input-glass-wrap">
+                  <Lock size={16} className="input-lead-icon" />
                   <input
                     type={showPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    required={!isLogin}
+                    required
                   />
+                  <button
+                    type="button"
+                    className="eye-toggle-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label="Toggle password visibility"
+                  >
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
                 </div>
               </div>
-            )}
 
-            {isLogin && (
-              <div className="luxury-remember-row">
-                <label className="luxury-checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                  />
-                  <span>Remember this authorized terminal</span>
-                </label>
-              </div>
-            )}
+              {/* Confirm Password for Signup */}
+              <AnimatePresence>
+                {!isLogin && (
+                  <motion.div 
+                    className="form-input-block"
+                    initial={{ opacity: 0, height: 0, y: -12 }}
+                    animate={{ opacity: 1, height: "auto", y: 0 }}
+                    exit={{ opacity: 0, height: 0, y: -12 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <label>CONFIRM PASSWORD</label>
+                    <div className="input-glass-wrap">
+                      <Lock size={16} className="input-lead-icon" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="••••••••••••"
+                        required={!isLogin}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-            <button type="submit" className="luxury-submit-btn" disabled={loading}>
-              {loading ? (
-                <div className="luxury-spinner" />
-              ) : (
-                <>
-                  <span>{isLogin ? "Sign In to Terminal" : "Complete Registration"}</span>
-                  <ArrowRight size={17} />
-                </>
+              {isLogin && (
+                <div className="remember-row">
+                  <label className="checkbox-custom-label">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                    />
+                    <span>Remember terminal authentication</span>
+                  </label>
+                </div>
               )}
-            </button>
-          </form>
 
-          {/* Security & Credentials Proof */}
-          <div className="luxury-footer-badges">
-            <div className="badge-item">
-              <Shield size={13} color="#10b981" />
-              <span>256-Bit TLS Vault</span>
-            </div>
-            <span className="badge-dot">•</span>
-            <div className="badge-item">
-              <Award size={13} color="#3b82f6" />
-              <span>SOC2 Type II</span>
-            </div>
-            <span className="badge-dot">•</span>
-            <div className="badge-item">
-              <Globe size={13} color="#94a3b8" />
-              <span>FINRA Standard</span>
+              {/* ACTION SUBMIT BUTTON WITH FRAMER MOTION PHYSICS */}
+              <motion.button 
+                type="submit" 
+                className="framer-action-btn" 
+                disabled={loading}
+                whileHover={{ scale: 1.015, boxShadow: "0 8px 30px rgba(37, 99, 235, 0.45)" }}
+                whileTap={{ scale: 0.985 }}
+                transition={{ duration: 0.15 }}
+              >
+                {loading ? (
+                  <div className="action-spinner" />
+                ) : (
+                  <>
+                    <span>{isLogin ? "Sign In to Terminal" : "Complete Registration"}</span>
+                    <ArrowRight size={17} />
+                  </>
+                )}
+              </motion.button>
+            </form>
+
+            {/* Bottom Compliance row */}
+            <div className="terminal-card-footer">
+              <div className="trust-pill">
+                <CheckCircle2 size={13} color="#10b981" />
+                <span>FINRA Standard Format</span>
+              </div>
+              <span className="trust-dot">•</span>
+              <div className="trust-pill">
+                <Shield size={13} color="#3b82f6" />
+                <span>SOC2 Certified</span>
+              </div>
+              <span className="trust-dot">•</span>
+              <div className="trust-pill">
+                <Award size={13} color="#94a3b8" />
+                <span>256-Bit TLS</span>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Bottom Social Proof Bar */}
-        <div className="luxury-trust-bar">
-          <p>
-            Institutional intelligence platform tracking <strong>$48B+</strong> in asset coverage across 1,800+ global equities.
-          </p>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
