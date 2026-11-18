@@ -2,39 +2,14 @@ import { useState } from "react";
 import { loginUser, signupUser } from "../services/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  TrendingUp, 
-  TrendingDown,
-  Shield, 
-  Lock, 
-  Mail, 
   User, 
-  ArrowRight, 
+  Mail, 
+  Lock, 
   Eye, 
-  EyeOff, 
-  CheckCircle2, 
-  Globe,
-  Award,
-  BarChart3,
-  Building2,
-  DollarSign,
-  ChevronRight,
-  Activity,
-  Zap,
-  Sparkles
+  EyeOff,
+  TrendingUp,
+  AlertCircle
 } from "lucide-react";
-
-const TICKER_DATA = [
-  { symbol: "S&P 500", price: "5,892.40", change: "+0.82%", up: true },
-  { symbol: "NASDAQ", price: "18,945.20", change: "+1.41%", up: true },
-  { symbol: "DOW JONES", price: "43,870.10", change: "+0.45%", up: true },
-  { symbol: "NVIDIA (NVDA)", price: "$141.50", change: "+3.24%", up: true },
-  { symbol: "APPLE (AAPL)", price: "$232.80", change: "+1.12%", up: true },
-  { symbol: "GOLD", price: "$2,694.10", change: "+0.62%", up: true },
-  { symbol: "BRENT CRUDE", price: "$74.20", change: "-0.38%", up: false },
-  { symbol: "US 10Y", price: "4.38%", change: "-0.04%", up: false },
-  { symbol: "EUR/USD", price: "1.0542", change: "+0.15%", up: true },
-  { symbol: "FTSE 100", price: "8,420.15", change: "+0.35%", up: true }
-];
 
 function Auth({ onAuthSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -43,7 +18,6 @@ function Auth({ onAuthSuccess }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -52,13 +26,13 @@ function Auth({ onAuthSuccess }) {
     setError("");
 
     if (!email.trim() || !password.trim()) {
-      setError("Please provide both email and password.");
+      setError("Please provide email and password.");
       return;
     }
 
     if (!isLogin) {
       if (!name.trim()) {
-        setError("Please enter your full name.");
+        setError("Please enter your name.");
         return;
       }
       if (password !== confirmPassword) {
@@ -66,7 +40,7 @@ function Auth({ onAuthSuccess }) {
         return;
       }
       if (password.length < 6) {
-        setError("Password must be at least 6 characters long.");
+        setError("Password must be at least 6 characters.");
         return;
       }
     }
@@ -91,15 +65,15 @@ function Auth({ onAuthSuccess }) {
       setError(
         err.response?.data?.message || 
         err.response?.data?.error || 
-        "Authentication failed. Please verify your connection."
+        "Something went wrong. Please check your connection."
       );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleTabChange = (loginTab) => {
-    setIsLogin(loginTab);
+  const handleToggleMode = (loginMode) => {
+    setIsLogin(loginMode);
     setError("");
     setName("");
     setEmail("");
@@ -108,248 +82,185 @@ function Auth({ onAuthSuccess }) {
   };
 
   return (
-    <div className="premium-auth-viewport">
-      {/* Dynamic Animated Ambient Gradients */}
+    <div className="dribbble-auth-canvas">
       <motion.div 
-        className="ambient-orb orb-primary"
-        animate={{
-          x: [0, 40, -20, 0],
-          y: [0, -30, 20, 0],
-          scale: [1, 1.08, 0.95, 1]
-        }}
-        transition={{
-          duration: 16,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      <motion.div 
-        className="ambient-orb orb-secondary"
-        animate={{
-          x: [0, -50, 30, 0],
-          y: [0, 40, -20, 0],
-          scale: [1, 0.92, 1.1, 1]
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      <div className="ambient-grid-overlay" />
-
-      {/* TOP LIVE FINANCIAL TICKER */}
-      <div className="premium-ticker-ribbon">
-        <div className="ticker-label-chip">
-          <span className="live-pulsar" />
-          <span>GLOBAL MARKETS</span>
-        </div>
-        <div className="ticker-infinite-track">
-          {[...TICKER_DATA, ...TICKER_DATA].map((t, idx) => (
-            <div key={idx} className="ticker-capsule">
-              <span className="capsule-sym">{t.symbol}</span>
-              <span className="capsule-val">{t.price}</span>
-              <span className={`capsule-delta ${t.up ? "bull" : "bear"}`}>
-                {t.change} {t.up ? "▲" : "▼"}
-              </span>
-              <span className="capsule-sep">•</span>
+        className="dribbble-card-deck"
+        initial={{ opacity: 0, scale: 0.98, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
+        {/* LEFT SECTION: BRANDING & FINANCIAL ILLUSTRATION */}
+        <div className="dribbble-left-pane">
+          {/* Top Brand Logo */}
+          <div className="dribbble-brand-row">
+            <div className="dribbble-brand-icon">
+              <span>IR</span>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* EXPANSIVE 2-COLUMN LUXURY STAGE */}
-      <div className="premium-auth-stage">
-        {/* LEFT COLUMN: INTERACTIVE INSTITUTIONAL SHOWCASE */}
-        <motion.div 
-          className="stage-left-showcase"
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          <div className="showcase-brand-lockup">
-            <div className="brand-crest-emblem">
-              <TrendingUp size={24} strokeWidth={2.5} />
-            </div>
-            <div>
-              <div className="brand-firm-title">APEX RESEARCH</div>
-              <div className="brand-firm-division">INSTITUTIONAL EQUITY INTELLIGENCE</div>
+            <div className="dribbble-brand-copy">
+              <strong>Investment Research</strong>
+              <span>Your Partner In Finance</span>
             </div>
           </div>
 
-          <div className="showcase-hero-copy">
-            <h2>Next-Generation Equity Research & Valuation</h2>
-            <p>
-              Autonomous fundamental coverage, moat durability analytics, and institutional consensus ratings compiled across 1,800+ global assets.
-            </p>
-          </div>
-
-          {/* FLOATING INTERACTIVE CARDS */}
-          <div className="floating-cards-stack">
-            {/* Asset Focus Card */}
-            <motion.div 
-              className="glass-preview-card"
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          {/* Centerpiece Vector Illustration */}
+          <div className="dribbble-illustration-wrapper">
+            <svg
+              viewBox="0 0 460 320"
+              className="dribbble-finance-svg"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <div className="card-top-row">
-                <div className="ticker-avatar">NVDA</div>
-                <div>
-                  <strong>NVIDIA Corporation</strong>
-                  <span>NASDAQ: NVDA • Semiconductor & AI</span>
-                </div>
-                <div className="rating-pill-outperform">OUTPERFORM</div>
-              </div>
-              <div className="card-metrics-row">
-                <div>
-                  <small>ANALYST TARGET</small>
-                  <strong>$168.00</strong>
-                </div>
-                <div>
-                  <small>CONVICTION</small>
-                  <strong className="text-emerald">94%</strong>
-                </div>
-                <div>
-                  <small>MOAT INDEX</small>
-                  <strong>92 / 100</strong>
-                </div>
-              </div>
-              {/* Mini SVG Sparkline */}
-              <div className="sparkline-wrapper">
-                <svg viewBox="0 0 280 40" className="sparkline-svg">
-                  <path
-                    d="M 0 35 Q 40 25, 70 28 T 140 18 T 210 12 T 280 5"
-                    fill="none"
-                    stroke="#10b981"
-                    strokeWidth="2.5"
-                  />
-                  <path
-                    d="M 0 35 Q 40 25, 70 28 T 140 18 T 210 12 T 280 5 L 280 40 L 0 40 Z"
-                    fill="url(#sparkline-grad)"
-                    opacity="0.2"
-                  />
-                  <defs>
-                    <linearGradient id="sparkline-grad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10b981" />
-                      <stop offset="100%" stopColor="transparent" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-            </motion.div>
+              {/* Soft background glow */}
+              <circle cx="230" cy="160" r="130" fill="#38bdf8" fillOpacity="0.08" />
 
-            {/* Quick Stats Pill */}
-            <motion.div 
-              className="glass-preview-pill"
-              animate={{ y: [0, 6, 0] }}
-              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            >
-              <div className="pill-icon-box">
-                <Activity size={16} color="#3b82f6" />
-              </div>
-              <div>
-                <strong>$48.6B Coverage Monitored</strong>
-                <span>Continuous 10-K & earnings sentiment tracking</span>
-              </div>
-            </motion.div>
+              {/* Central Globe */}
+              <circle cx="230" cy="155" r="88" fill="#e0f2fe" />
+              {/* Globe Continents */}
+              <path
+                d="M 185 130 Q 200 115, 220 125 T 255 145 T 240 180 T 205 195 T 180 170 Z"
+                fill="#38bdf8"
+              />
+              <path
+                d="M 235 110 Q 260 100, 275 120 T 295 145 T 280 165 T 255 155 Z"
+                fill="#0284c7"
+              />
+              <path
+                d="M 175 150 Q 190 145, 195 160 T 175 185 Z"
+                fill="#0284c7"
+              />
+
+              {/* Floating Financial Icons */}
+              {/* Dollar Sign Coin */}
+              <circle cx="170" cy="95" r="16" fill="#fbbf24" stroke="#f59e0b" strokeWidth="2" />
+              <text x="170" y="101" textAnchor="middle" fill="#78350f" fontSize="15" fontWeight="bold" fontFamily="Arial">$</text>
+
+              {/* Percentage Coin */}
+              <circle cx="285" cy="85" r="14" fill="#fbbf24" stroke="#f59e0b" strokeWidth="2" />
+              <text x="285" y="90" textAnchor="middle" fill="#78350f" fontSize="13" fontWeight="bold" fontFamily="Arial">%</text>
+
+              {/* Small Market Node Rings */}
+              <circle cx="340" cy="130" r="8" stroke="#ffffff" strokeWidth="2" strokeDasharray="2 2" />
+              <circle cx="125" cy="120" r="7" stroke="#ffffff" strokeWidth="2" />
+
+              {/* Bar Chart Graphics on left */}
+              <rect x="115" y="145" width="22" height="4" rx="2" fill="#bae6fd" />
+              <rect x="110" y="153" width="32" height="4" rx="2" fill="#38bdf8" />
+              <rect x="118" y="161" width="18" height="4" rx="2" fill="#bae6fd" />
+
+              {/* Technical Chart Curves on right */}
+              <path
+                d="M 315 120 Q 330 105, 345 115 T 375 108"
+                stroke="#38bdf8"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              <path
+                d="M 315 130 Q 330 118, 345 125 T 375 118"
+                stroke="#bae6fd"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+
+              {/* Bold Golden Upward Growth Arrow */}
+              <path
+                d="M 160 215 L 225 145 L 255 175 L 320 95"
+                stroke="#f59e0b"
+                strokeWidth="10"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <polygon
+                points="320,80 338,105 308,102"
+                fill="#f59e0b"
+              />
+              {/* Inner yellow highlight on arrow */}
+              <path
+                d="M 164 212 L 225 147 L 255 177 L 316 102"
+                stroke="#fde047"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+
+              {/* Financial Analysts / Figures (Vector silhouettes) */}
+              {/* Left Analyst */}
+              <circle cx="165" cy="215" r="9" fill="#0f172a" />
+              <path d="M 152 250 C 152 230, 178 230, 178 250 Z" fill="#0284c7" />
+              <rect x="156" y="250" width="8" height="32" fill="#1e293b" />
+              <rect x="166" y="250" width="8" height="32" fill="#1e293b" />
+              <circle cx="160" cy="245" r="11" fill="#f8fafc" opacity="0.3" />
+
+              {/* Center Analyst (Main) */}
+              <circle cx="218" cy="205" r="10" fill="#0f172a" />
+              <path d="M 202 245 C 202 222, 234 222, 234 245 Z" fill="#0369a1" />
+              <rect x="207" y="245" width="9" height="38" fill="#0f172a" />
+              <rect x="219" y="245" width="9" height="38" fill="#0f172a" />
+
+              {/* Right Analyst with Tablet */}
+              <circle cx="265" cy="215" r="9" fill="#0f172a" />
+              <path d="M 252 250 C 252 230, 278 230, 278 250 Z" fill="#0f172a" />
+              <rect x="256" y="250" width="8" height="32" fill="#334155" />
+              <rect x="266" y="250" width="8" height="32" fill="#334155" />
+              {/* Tablet/Folder */}
+              <rect x="270" y="232" width="14" height="18" rx="2" fill="#38bdf8" />
+
+              {/* Female Analyst on far right */}
+              <circle cx="300" cy="222" r="9" fill="#d97706" />
+              <path d="M 290 252 C 290 234, 310 234, 310 252 Z" fill="#0284c7" />
+              <rect x="293" y="252" width="6" height="30" fill="#0f172a" />
+              <rect x="301" y="252" width="6" height="30" fill="#0f172a" />
+            </svg>
           </div>
 
-          <div className="showcase-footer-proof">
-            <div className="proof-tag">
-              <Shield size={14} color="#10b981" />
-              <span>Enterprise Grade 256-Bit Financial Encryption</span>
-            </div>
+          {/* Bottom Heading matching the Dribbble style */}
+          <div className="dribbble-bottom-headline">
+            <h3>
+              New way to <span className="highlight-gold">Invest with Research</span>
+            </h3>
           </div>
-        </motion.div>
+        </div>
 
-        {/* RIGHT COLUMN: THE ULTRA-SLEEK TERMINAL CARD */}
-        <motion.div 
-          className="stage-right-card"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
-        >
-          <div className="terminal-card-glass">
-            {/* Header */}
-            <div className="terminal-card-header">
-              <div className="mobile-brand-crest">
-                <TrendingUp size={20} strokeWidth={2.5} />
-              </div>
-              <h2>{isLogin ? "Terminal Sign In" : "Register Analyst Profile"}</h2>
-              <p>
-                {isLogin
-                  ? "Access your firm's private research models and coverage watchlists."
-                  : "Begin evaluating company valuations with institutional consensus."}
-              </p>
+        {/* RIGHT SECTION: THE FLOATING WHITE LOGIN CARD */}
+        <div className="dribbble-right-pane">
+          <motion.div 
+            className="dribbble-auth-card"
+            layout
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+          >
+            <div className="card-greeting-block">
+              <h2>{isLogin ? "Welcome" : "Create Account"}</h2>
+              <p>{isLogin ? "Sign in to continue" : "Register to get started"}</p>
             </div>
 
-            {/* FRAMER MOTION SLIDING PILL SWITCHER */}
-            <div className="framer-segmented-track">
-              <button
-                type="button"
-                className={`framer-tab-btn ${isLogin ? "selected" : ""}`}
-                onClick={() => handleTabChange(true)}
+            {error && (
+              <motion.div 
+                className="dribbble-error-alert"
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
               >
-                {isLogin && (
-                  <motion.div
-                    className="framer-active-pill"
-                    layoutId="activeTabPill"
-                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                  />
-                )}
-                <span className="tab-btn-text">Sign In</span>
-              </button>
+                <AlertCircle size={14} />
+                <span>{error}</span>
+              </motion.div>
+            )}
 
-              <button
-                type="button"
-                className={`framer-tab-btn ${!isLogin ? "selected" : ""}`}
-                onClick={() => handleTabChange(false)}
-              >
+            <form onSubmit={handleSubmit} className="dribbble-login-form">
+              <AnimatePresence mode="popLayout">
                 {!isLogin && (
-                  <motion.div
-                    className="framer-active-pill"
-                    layoutId="activeTabPill"
-                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                  />
-                )}
-                <span className="tab-btn-text">Create Account</span>
-              </button>
-            </div>
-
-            {/* FORM */}
-            <form onSubmit={handleSubmit} className="terminal-form">
-              <AnimatePresence mode="wait">
-                {error && (
                   <motion.div 
-                    className="form-alert-banner"
-                    initial={{ opacity: 0, height: 0, y: -10 }}
-                    animate={{ opacity: 1, height: "auto", y: 0 }}
-                    exit={{ opacity: 0, height: 0, y: -10 }}
+                    className="dribbble-input-row"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.25 }}
                   >
-                    <span>{error}</span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Dynamic Name Input for Signup */}
-              <AnimatePresence>
-                {!isLogin && (
-                  <motion.div 
-                    className="form-input-block"
-                    initial={{ opacity: 0, height: 0, y: -12 }}
-                    animate={{ opacity: 1, height: "auto", y: 0 }}
-                    exit={{ opacity: 0, height: 0, y: -12 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <label>FULL LEGAL NAME</label>
-                    <div className="input-glass-wrap">
-                      <User size={16} className="input-lead-icon" />
+                    <label>FULL NAME</label>
+                    <div className="dribbble-input-field">
+                      <User size={15} className="dribbble-field-icon" />
                       <input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="e.g. Jordan Belfort"
+                        placeholder="Enter full name"
                         required={!isLogin}
                       />
                     </div>
@@ -357,39 +268,34 @@ function Auth({ onAuthSuccess }) {
                 )}
               </AnimatePresence>
 
-              <div className="form-input-block">
-                <label>INSTITUTIONAL EMAIL</label>
-                <div className="input-glass-wrap">
-                  <Mail size={16} className="input-lead-icon" />
+              <div className="dribbble-input-row">
+                <label>{isLogin ? "CLIENT CODE / EMAIL" : "EMAIL ADDRESS"}</label>
+                <div className="dribbble-input-field">
+                  <Mail size={15} className="dribbble-field-icon" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="analyst@firm.com"
+                    placeholder="Enter registered email"
                     required
                   />
                 </div>
               </div>
 
-              <div className="form-input-block">
-                <div className="input-label-row">
-                  <label>PASSWORD</label>
-                  {isLogin && (
-                    <span className="forgot-text-link">Forgot password?</span>
-                  )}
-                </div>
-                <div className="input-glass-wrap">
-                  <Lock size={16} className="input-lead-icon" />
+              <div className="dribbble-input-row">
+                <label>PASSWORD</label>
+                <div className="dribbble-input-field">
+                  <Lock size={15} className="dribbble-field-icon" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••••••"
+                    placeholder="••••••••"
                     required
                   />
                   <button
                     type="button"
-                    className="eye-toggle-btn"
+                    className="dribbble-pw-eye"
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label="Toggle password visibility"
                   >
@@ -398,24 +304,23 @@ function Auth({ onAuthSuccess }) {
                 </div>
               </div>
 
-              {/* Confirm Password for Signup */}
-              <AnimatePresence>
+              <AnimatePresence mode="popLayout">
                 {!isLogin && (
                   <motion.div 
-                    className="form-input-block"
-                    initial={{ opacity: 0, height: 0, y: -12 }}
-                    animate={{ opacity: 1, height: "auto", y: 0 }}
-                    exit={{ opacity: 0, height: 0, y: -12 }}
-                    transition={{ duration: 0.3 }}
+                    className="dribbble-input-row"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.25 }}
                   >
                     <label>CONFIRM PASSWORD</label>
-                    <div className="input-glass-wrap">
-                      <Lock size={16} className="input-lead-icon" />
+                    <div className="dribbble-input-field">
+                      <Lock size={15} className="dribbble-field-icon" />
                       <input
                         type={showPassword ? "text" : "password"}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="••••••••••••"
+                        placeholder="••••••••"
                         required={!isLogin}
                       />
                     </div>
@@ -424,58 +329,55 @@ function Auth({ onAuthSuccess }) {
               </AnimatePresence>
 
               {isLogin && (
-                <div className="remember-row">
-                  <label className="checkbox-custom-label">
-                    <input
-                      type="checkbox"
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                    />
-                    <span>Remember terminal authentication</span>
-                  </label>
+                <div className="dribbble-aux-links">
+                  <span className="dribbble-forgot-link">Forgot password?</span>
                 </div>
               )}
 
-              {/* ACTION SUBMIT BUTTON WITH FRAMER MOTION PHYSICS */}
               <motion.button 
                 type="submit" 
-                className="framer-action-btn" 
+                className="dribbble-primary-submit-btn" 
                 disabled={loading}
-                whileHover={{ scale: 1.015, boxShadow: "0 8px 30px rgba(37, 99, 235, 0.45)" }}
-                whileTap={{ scale: 0.985 }}
-                transition={{ duration: 0.15 }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
               >
                 {loading ? (
-                  <div className="action-spinner" />
+                  <div className="dribbble-loading-spinner" />
                 ) : (
-                  <>
-                    <span>{isLogin ? "Sign In to Terminal" : "Complete Registration"}</span>
-                    <ArrowRight size={17} />
-                  </>
+                  <span>{isLogin ? "LOGIN" : "SIGN UP"}</span>
                 )}
               </motion.button>
             </form>
 
-            {/* Bottom Compliance row */}
-            <div className="terminal-card-footer">
-              <div className="trust-pill">
-                <CheckCircle2 size={13} color="#10b981" />
-                <span>FINRA Standard Format</span>
-              </div>
-              <span className="trust-dot">•</span>
-              <div className="trust-pill">
-                <Shield size={13} color="#3b82f6" />
-                <span>SOC2 Certified</span>
-              </div>
-              <span className="trust-dot">•</span>
-              <div className="trust-pill">
-                <Award size={13} color="#94a3b8" />
-                <span>256-Bit TLS</span>
-              </div>
+            {/* Toggle Between Login & Sign Up */}
+            <div className="dribbble-switch-mode">
+              {isLogin ? (
+                <p>
+                  New user ?{" "}
+                  <button
+                    type="button"
+                    className="switch-action-link"
+                    onClick={() => handleToggleMode(false)}
+                  >
+                    Sign Up
+                  </button>
+                </p>
+              ) : (
+                <p>
+                  Existing user ?{" "}
+                  <button
+                    type="button"
+                    className="switch-action-link"
+                    onClick={() => handleToggleMode(true)}
+                  >
+                    Login
+                  </button>
+                </p>
+              )}
             </div>
-          </div>
-        </motion.div>
-      </div>
+          </motion.div>
+        </div>
+      </motion.div>
     </div>
   );
 }
