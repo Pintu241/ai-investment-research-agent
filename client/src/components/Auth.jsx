@@ -2,7 +2,8 @@ import { useState } from "react";
 import { loginUser, signupUser } from "../services/api";
 import { 
   TrendingUp, 
-  ShieldCheck, 
+  TrendingDown,
+  Shield, 
   Lock, 
   Mail, 
   User, 
@@ -10,10 +11,23 @@ import {
   Eye, 
   EyeOff, 
   CheckCircle2, 
-  BarChart3,
-  Briefcase,
-  FileText
+  Globe,
+  Award,
+  Building2,
+  Check
 } from "lucide-react";
+
+const TICKER_DATA = [
+  { symbol: "S&P 500", price: "5,892.40", change: "+0.82%", up: true },
+  { symbol: "NASDAQ", price: "18,945.20", change: "+1.41%", up: true },
+  { symbol: "DOW JONES", price: "43,870.10", change: "+0.45%", up: true },
+  { symbol: "GOLD", price: "$2,694.10", change: "+0.62%", up: true },
+  { symbol: "BRENT CRUDE", price: "$74.20", change: "-0.38%", up: false },
+  { symbol: "US 10Y", price: "4.38%", change: "-0.04%", up: false },
+  { symbol: "EUR/USD", price: "1.0542", change: "+0.15%", up: true },
+  { symbol: "FTSE 100", price: "8,420.15", change: "+0.35%", up: true },
+  { symbol: "NIKKEI 225", price: "38,720.50", change: "+0.94%", up: true }
+];
 
 function Auth({ onAuthSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -22,6 +36,7 @@ function Auth({ onAuthSuccess }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -69,7 +84,7 @@ function Auth({ onAuthSuccess }) {
       setError(
         err.response?.data?.message || 
         err.response?.data?.error || 
-        "Authentication failed. Please verify your connection."
+        "Authentication failed. Please check your network connection."
       );
     } finally {
       setLoading(false);
@@ -86,126 +101,101 @@ function Auth({ onAuthSuccess }) {
   };
 
   return (
-    <div className="portal-auth-wrapper">
-      <div className="portal-auth-container">
-        {/* Left Side: Institutional Overview */}
-        <div className="portal-showcase-pane">
-          <div className="portal-header-brand">
-            <div className="portal-logo-square">
-              <TrendingUp size={22} strokeWidth={2.5} />
-            </div>
-            <div>
-              <div className="portal-brand-title">APEX RESEARCH</div>
-              <div className="portal-brand-tag">GLOBAL EQUITY INTELLIGENCE</div>
-            </div>
-          </div>
+    <div className="luxury-auth-page">
+      {/* Ambient background light gradients */}
+      <div className="luxury-ambient-mesh luxury-mesh-top" />
+      <div className="luxury-ambient-mesh luxury-mesh-bottom" />
+      <div className="luxury-noise-overlay" />
 
-          <div className="portal-showcase-body">
-            <h1 className="portal-headline">
-              Institutional Equity Research & Company Valuation
-            </h1>
-            <p className="portal-description">
-              Access comprehensive fundamental research, competitive moat analysis, balance sheet ratios, and structured investment recommendations across global equities.
-            </p>
-
-            <div className="portal-feature-list">
-              <div className="portal-feature-item">
-                <div className="portal-feature-icon">
-                  <BarChart3 size={18} />
-                </div>
-                <div>
-                  <strong>Fundamental & Financial Statement Analysis</strong>
-                  <p>In-depth evaluation of earnings quality, margin trajectory, and solvency ratios.</p>
-                </div>
-              </div>
-
-              <div className="portal-feature-item">
-                <div className="portal-feature-icon">
-                  <Briefcase size={18} />
-                </div>
-                <div>
-                  <strong>Disciplined Coverage Framework</strong>
-                  <p>Systematic BUY, HOLD, and SELL ratings backed by qualitative thesis and conviction scoring.</p>
-                </div>
-              </div>
-
-              <div className="portal-feature-item">
-                <div className="portal-feature-icon">
-                  <FileText size={18} />
-                </div>
-                <div>
-                  <strong>Proprietary Research Archive</strong>
-                  <p>Maintain your custom watchlists, export publication-ready reports, and track coverage changes.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="portal-showcase-footer">
-            <div className="portal-compliance-tag">
-              <ShieldCheck size={14} />
-              <span>Standard Institutional Compliance & Privacy</span>
-            </div>
-          </div>
+      {/* TOP LIVE FINANCIAL TICKER MARQUEE */}
+      <div className="luxury-ticker-bar">
+        <div className="ticker-badge-live">
+          <span className="ticker-live-dot" />
+          <span>MARKET TICKER</span>
         </div>
+        <div className="ticker-track">
+          {[...TICKER_DATA, ...TICKER_DATA].map((t, idx) => (
+            <div key={idx} className="ticker-item">
+              <span className="ticker-symbol">{t.symbol}</span>
+              <span className="ticker-price">{t.price}</span>
+              <span className={`ticker-change ${t.up ? "positive" : "negative"}`}>
+                {t.change} {t.up ? "▲" : "▼"}
+              </span>
+              <span className="ticker-separator">•</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
-        {/* Right Side: Account Form */}
-        <div className="portal-form-pane">
-          <div className="portal-form-header">
-            <h2>{isLogin ? "Analyst Portal Sign In" : "Register Analyst Account"}</h2>
+      {/* CENTERPIECE LUXURY AUTHENTICATION CARD */}
+      <div className="luxury-auth-wrapper">
+        <div className="luxury-card-container">
+          {/* Card Brand Header */}
+          <div className="luxury-brand-block">
+            <div className="luxury-brand-crest">
+              <div className="crest-inner-icon">
+                <TrendingUp size={22} strokeWidth={2.5} />
+              </div>
+            </div>
+            <h1 className="luxury-brand-title">A P E X</h1>
+            <span className="luxury-brand-subtitle">GLOBAL EQUITY RESEARCH & ASSET VALUATION</span>
+          </div>
+
+          <div className="luxury-welcome-text">
+            <h2>{isLogin ? "Analyst Portal Access" : "Create Institutional Account"}</h2>
             <p>
-              {isLogin 
-                ? "Enter your credentials to access company coverage and research reports." 
-                : "Create an analyst profile to begin reviewing company fundamentals."}
+              {isLogin
+                ? "Sign in to access your firm's private equity coverage, company valuation models, and ratings."
+                : "Register your analyst profile to access institutional equity research and custom watchlists."}
             </p>
           </div>
 
-          {/* Tab Selector */}
-          <div className="portal-tabs">
+          {/* Classy Switcher Pill */}
+          <div className="luxury-segmented-control">
             <button
               type="button"
-              className={`portal-tab-btn ${isLogin ? "active" : ""}`}
+              className={`segmented-btn ${isLogin ? "active" : ""}`}
               onClick={() => handleTabChange(true)}
             >
               Sign In
             </button>
             <button
               type="button"
-              className={`portal-tab-btn ${!isLogin ? "active" : ""}`}
+              className={`segmented-btn ${!isLogin ? "active" : ""}`}
               onClick={() => handleTabChange(false)}
             >
-              Create Account
+              Register Account
             </button>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="portal-form">
+          <form onSubmit={handleSubmit} className="luxury-form">
             {error && (
-              <div className="portal-error-banner">
+              <div className="luxury-alert-box">
                 <span>{error}</span>
               </div>
             )}
 
             {!isLogin && (
-              <div className="portal-field">
-                <label>Full Name</label>
-                <div className="portal-input-wrap">
-                  <User size={18} className="portal-field-icon" />
+              <div className="luxury-input-group">
+                <label className="luxury-label">FULL NAME</label>
+                <div className="luxury-input-wrap">
+                  <User size={17} className="luxury-field-icon" />
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Michael Chen"
+                    placeholder="e.g. Alexander Vance"
                     required={!isLogin}
                   />
                 </div>
               </div>
             )}
 
-            <div className="portal-field">
-              <label>Work Email</label>
-              <div className="portal-input-wrap">
-                <Mail size={18} className="portal-field-icon" />
+            <div className="luxury-input-group">
+              <label className="luxury-label">WORK EMAIL ADDRESS</label>
+              <div className="luxury-input-wrap">
+                <Mail size={17} className="luxury-field-icon" />
                 <input
                   type="email"
                   value={email}
@@ -216,20 +206,25 @@ function Auth({ onAuthSuccess }) {
               </div>
             </div>
 
-            <div className="portal-field">
-              <label>Password</label>
-              <div className="portal-input-wrap">
-                <Lock size={18} className="portal-field-icon" />
+            <div className="luxury-input-group">
+              <div className="luxury-label-split">
+                <label className="luxury-label">SECURITY PASSWORD</label>
+                {isLogin && (
+                  <span className="luxury-forgot-link">Forgot password?</span>
+                )}
+              </div>
+              <div className="luxury-input-wrap">
+                <Lock size={17} className="luxury-field-icon" />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="••••••••••••"
                   required
                 />
                 <button
                   type="button"
-                  className="portal-password-toggle"
+                  className="luxury-eye-btn"
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label="Toggle password visibility"
                 >
@@ -239,37 +234,70 @@ function Auth({ onAuthSuccess }) {
             </div>
 
             {!isLogin && (
-              <div className="portal-field">
-                <label>Confirm Password</label>
-                <div className="portal-input-wrap">
-                  <Lock size={18} className="portal-field-icon" />
+              <div className="luxury-input-group">
+                <label className="luxury-label">CONFIRM SECURITY PASSWORD</label>
+                <div className="luxury-input-wrap">
+                  <Lock size={17} className="luxury-field-icon" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="••••••••"
+                    placeholder="••••••••••••"
                     required={!isLogin}
                   />
                 </div>
               </div>
             )}
 
-            <button type="submit" className="portal-submit-btn" disabled={loading}>
+            {isLogin && (
+              <div className="luxury-remember-row">
+                <label className="luxury-checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
+                  <span>Remember this authorized terminal</span>
+                </label>
+              </div>
+            )}
+
+            <button type="submit" className="luxury-submit-btn" disabled={loading}>
               {loading ? (
-                <div className="portal-spinner" />
+                <div className="luxury-spinner" />
               ) : (
                 <>
-                  <span>{isLogin ? "Sign In to Research Platform" : "Complete Registration"}</span>
+                  <span>{isLogin ? "Sign In to Terminal" : "Complete Registration"}</span>
                   <ArrowRight size={17} />
                 </>
               )}
             </button>
           </form>
 
-          <div className="portal-footer-note">
-            <CheckCircle2 size={13} color="#059669" />
-            <span>Encrypted Session • SEC & FINRA Formatted Research</span>
+          {/* Security & Credentials Proof */}
+          <div className="luxury-footer-badges">
+            <div className="badge-item">
+              <Shield size={13} color="#10b981" />
+              <span>256-Bit TLS Vault</span>
+            </div>
+            <span className="badge-dot">•</span>
+            <div className="badge-item">
+              <Award size={13} color="#3b82f6" />
+              <span>SOC2 Type II</span>
+            </div>
+            <span className="badge-dot">•</span>
+            <div className="badge-item">
+              <Globe size={13} color="#94a3b8" />
+              <span>FINRA Standard</span>
+            </div>
           </div>
+        </div>
+
+        {/* Bottom Social Proof Bar */}
+        <div className="luxury-trust-bar">
+          <p>
+            Institutional intelligence platform tracking <strong>$48B+</strong> in asset coverage across 1,800+ global equities.
+          </p>
         </div>
       </div>
     </div>
