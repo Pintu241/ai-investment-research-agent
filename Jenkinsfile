@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     environment {
-        EC2_HOST = '13.232.2.199'
+        EC2_HOST = '172.31.4.94'
         EC2_USER = 'ubuntu'
         PROJECT_DIR = '/home/ubuntu/ai-investment-research-agent'
     }
