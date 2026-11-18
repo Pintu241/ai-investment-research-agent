@@ -1,0 +1,22 @@
+
+services:
+
+  # Backend application
+  server:
+    build: ./server
+    container_name: investment-backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./server/.env
+    restart: unless-stopped
+
+  # Frontend application
+  client:
+    build: ./client
+    container_name: investment-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
+    restart: unless-stopped
