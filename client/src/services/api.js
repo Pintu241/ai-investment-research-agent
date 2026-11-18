@@ -1,7 +1,22 @@
 import axios from "axios";
 
+const resolveBaseURL = () => {
+  if (typeof window !== "undefined") {
+    const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    // Remote host (e.g. AWS EC2, custom domain)
+    if (!isLocalhost) {
+      return "/api";
+    }
+    // Docker container served via Nginx on port 3000
+    if (window.location.port === "3000" || window.location.port === "80" || window.location.port === "") {
+      return "/api";
+    }
+  }
+  return import.meta.env.VITE_API_URL || "/api";
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL
+  baseURL: resolveBaseURL()
 });
 
 api.interceptors.request.use((config) => {

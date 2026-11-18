@@ -15,5 +15,13 @@ export const InvestmentState = Annotation.Root({
 
   confidence: Annotation(),
 
-  reasoning: Annotation()
+  reasoning: Annotation(),
+
+  businessScore: Annotation(),
+
+  financialScore: Annotation(),
+
+  newsScore: Annotation(),
+
+  riskScore: Annotation()
 });
