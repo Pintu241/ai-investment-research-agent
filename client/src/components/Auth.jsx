@@ -89,10 +89,8 @@ function Auth({ onAuthSuccess }) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        {/* LEFT SECTION: BRANDING & FINANCIAL ILLUSTRATION */}
-        <div className="dribbble-left-pane">
-          {/* Top Brand Logo */}
-          <div className="dribbble-brand-row">
+                <div className="dribbble-left-pane">
+                    <div className="dribbble-brand-row">
             <div className="dribbble-brand-icon">
               <span>IR</span>
             </div>
@@ -102,21 +100,17 @@ function Auth({ onAuthSuccess }) {
             </div>
           </div>
 
-          {/* Centerpiece Vector Illustration */}
-          <div className="dribbble-illustration-wrapper">
+                    <div className="dribbble-illustration-wrapper">
             <svg
               viewBox="0 0 460 320"
               className="dribbble-finance-svg"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              {/* Soft background glow */}
-              <circle cx="230" cy="160" r="130" fill="#38bdf8" fillOpacity="0.08" />
+                            <circle cx="230" cy="160" r="130" fill="#38bdf8" fillOpacity="0.08" />
 
-              {/* Central Globe */}
-              <circle cx="230" cy="155" r="88" fill="#e0f2fe" />
-              {/* Globe Continents */}
-              <path
+                            <circle cx="230" cy="155" r="88" fill="#e0f2fe" />
+                            <path
                 d="M 185 130 Q 200 115, 220 125 T 255 145 T 240 180 T 205 195 T 180 170 Z"
                 fill="#38bdf8"
               />
@@ -129,26 +123,20 @@ function Auth({ onAuthSuccess }) {
                 fill="#0284c7"
               />
 
-              {/* Floating Financial Icons */}
-              {/* Dollar Sign Coin */}
-              <circle cx="170" cy="95" r="16" fill="#fbbf24" stroke="#f59e0b" strokeWidth="2" />
+                                          <circle cx="170" cy="95" r="16" fill="#fbbf24" stroke="#f59e0b" strokeWidth="2" />
               <text x="170" y="101" textAnchor="middle" fill="#78350f" fontSize="15" fontWeight="bold" fontFamily="Arial">$</text>
 
-              {/* Percentage Coin */}
-              <circle cx="285" cy="85" r="14" fill="#fbbf24" stroke="#f59e0b" strokeWidth="2" />
+                            <circle cx="285" cy="85" r="14" fill="#fbbf24" stroke="#f59e0b" strokeWidth="2" />
               <text x="285" y="90" textAnchor="middle" fill="#78350f" fontSize="13" fontWeight="bold" fontFamily="Arial">%</text>
 
-              {/* Small Market Node Rings */}
-              <circle cx="340" cy="130" r="8" stroke="#ffffff" strokeWidth="2" strokeDasharray="2 2" />
+                            <circle cx="340" cy="130" r="8" stroke="#ffffff" strokeWidth="2" strokeDasharray="2 2" />
               <circle cx="125" cy="120" r="7" stroke="#ffffff" strokeWidth="2" />
 
-              {/* Bar Chart Graphics on left */}
-              <rect x="115" y="145" width="22" height="4" rx="2" fill="#bae6fd" />
+                            <rect x="115" y="145" width="22" height="4" rx="2" fill="#bae6fd" />
               <rect x="110" y="153" width="32" height="4" rx="2" fill="#38bdf8" />
               <rect x="118" y="161" width="18" height="4" rx="2" fill="#bae6fd" />
 
-              {/* Technical Chart Curves on right */}
-              <path
+                            <path
                 d="M 315 120 Q 330 105, 345 115 T 375 108"
                 stroke="#38bdf8"
                 strokeWidth="2.5"
@@ -161,8 +149,7 @@ function Auth({ onAuthSuccess }) {
                 strokeLinecap="round"
               />
 
-              {/* Bold Golden Upward Growth Arrow */}
-              <path
+                            <path
                 d="M 160 215 L 225 145 L 255 175 L 320 95"
                 stroke="#f59e0b"
                 strokeWidth="10"
@@ -173,8 +160,7 @@ function Auth({ onAuthSuccess }) {
                 points="320,80 338,105 308,102"
                 fill="#f59e0b"
               />
-              {/* Inner yellow highlight on arrow */}
-              <path
+                            <path
                 d="M 164 212 L 225 147 L 255 177 L 316 102"
                 stroke="#fde047"
                 strokeWidth="4"
@@ -182,46 +168,38 @@ function Auth({ onAuthSuccess }) {
                 strokeLinejoin="round"
               />
 
-              {/* Financial Analysts / Figures (Vector silhouettes) */}
-              {/* Left Analyst */}
-              <circle cx="165" cy="215" r="9" fill="#0f172a" />
+                                          <circle cx="165" cy="215" r="9" fill="#0f172a" />
               <path d="M 152 250 C 152 230, 178 230, 178 250 Z" fill="#0284c7" />
               <rect x="156" y="250" width="8" height="32" fill="#1e293b" />
               <rect x="166" y="250" width="8" height="32" fill="#1e293b" />
               <circle cx="160" cy="245" r="11" fill="#f8fafc" opacity="0.3" />
 
-              {/* Center Analyst (Main) */}
-              <circle cx="218" cy="205" r="10" fill="#0f172a" />
+                            <circle cx="218" cy="205" r="10" fill="#0f172a" />
               <path d="M 202 245 C 202 222, 234 222, 234 245 Z" fill="#0369a1" />
               <rect x="207" y="245" width="9" height="38" fill="#0f172a" />
               <rect x="219" y="245" width="9" height="38" fill="#0f172a" />
 
-              {/* Right Analyst with Tablet */}
-              <circle cx="265" cy="215" r="9" fill="#0f172a" />
+                            <circle cx="265" cy="215" r="9" fill="#0f172a" />
               <path d="M 252 250 C 252 230, 278 230, 278 250 Z" fill="#0f172a" />
               <rect x="256" y="250" width="8" height="32" fill="#334155" />
               <rect x="266" y="250" width="8" height="32" fill="#334155" />
-              {/* Tablet/Folder */}
-              <rect x="270" y="232" width="14" height="18" rx="2" fill="#38bdf8" />
+                            <rect x="270" y="232" width="14" height="18" rx="2" fill="#38bdf8" />
 
-              {/* Female Analyst on far right */}
-              <circle cx="300" cy="222" r="9" fill="#d97706" />
+                            <circle cx="300" cy="222" r="9" fill="#d97706" />
               <path d="M 290 252 C 290 234, 310 234, 310 252 Z" fill="#0284c7" />
               <rect x="293" y="252" width="6" height="30" fill="#0f172a" />
               <rect x="301" y="252" width="6" height="30" fill="#0f172a" />
             </svg>
           </div>
 
-          {/* Bottom Heading matching the Dribbble style */}
-          <div className="dribbble-bottom-headline">
+                    <div className="dribbble-bottom-headline">
             <h3>
               New way to <span className="highlight-gold">Invest with Research</span>
             </h3>
           </div>
         </div>
 
-        {/* RIGHT SECTION: THE FLOATING WHITE LOGIN CARD */}
-        <div className="dribbble-right-pane">
+                <div className="dribbble-right-pane">
           <motion.div 
             className="dribbble-auth-card"
             layout
@@ -349,8 +327,7 @@ function Auth({ onAuthSuccess }) {
               </motion.button>
             </form>
 
-            {/* Toggle Between Login & Sign Up */}
-            <div className="dribbble-switch-mode">
+                        <div className="dribbble-switch-mode">
               {isLogin ? (
                 <p>
                   New user ?{" "}

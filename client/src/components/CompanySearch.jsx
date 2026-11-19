@@ -61,7 +61,6 @@ const ANALYSIS_PHASES = [
   { name: "Investment Thesis", desc: "Synthesizing target rating and multi-factor conviction score" }
 ];
 
-// High-fidelity branded company logos & icons
 function CompanyLogo({ name, size = 44 }) {
   const norm = (name || "").toLowerCase().trim();
 
@@ -140,7 +139,6 @@ function CompanyLogo({ name, size = 44 }) {
     );
   }
 
-  // Fallback: Elegant stylized corporate monogram
   const initials = (name || "CO")
     .split(" ")
     .slice(0, 2)
@@ -155,14 +153,12 @@ function CompanyLogo({ name, size = 44 }) {
   );
 }
 
-// Visual Area Sparkline Chart for Valuation Trajectory
 function ValuationTrajectoryChart({ companyName, decision, confidence }) {
   const isInvest = decision === "INVEST";
   const isPass = decision === "PASS";
   const strokeColor = isInvest ? "#10b981" : isPass ? "#ef4444" : "#f59e0b";
   const gradId = `spark-grad-${companyName.replace(/[^a-zA-Z0-9]/g, "")}`;
 
-  // SVG path for financial trajectory curve
   const pathD = isInvest
     ? "M 10 75 Q 70 65, 130 50 T 250 40 T 370 20 T 490 8"
     : isPass
@@ -193,19 +189,15 @@ function ValuationTrajectoryChart({ companyName, decision, confidence }) {
             </linearGradient>
           </defs>
 
-          {/* Grid lines */}
-          <line x1="10" y1="25" x2="490" y2="25" stroke="#e2e8f0" strokeDasharray="3 3" />
+                    <line x1="10" y1="25" x2="490" y2="25" stroke="#e2e8f0" strokeDasharray="3 3" />
           <line x1="10" y1="50" x2="490" y2="50" stroke="#e2e8f0" strokeDasharray="3 3" />
           <line x1="10" y1="75" x2="490" y2="75" stroke="#e2e8f0" strokeDasharray="3 3" />
 
-          {/* Shaded Area */}
-          <path d={areaD} fill={`url(#${gradId})`} />
+                    <path d={areaD} fill={`url(#${gradId})`} />
 
-          {/* Line Path */}
-          <path d={pathD} fill="none" stroke={strokeColor} strokeWidth="3.5" strokeLinecap="round" />
+                    <path d={pathD} fill="none" stroke={strokeColor} strokeWidth="3.5" strokeLinecap="round" />
 
-          {/* Key Data Markers */}
-          <circle cx="10" cy={isInvest ? 75 : isPass ? 20 : 50} r="4" fill="#ffffff" stroke={strokeColor} strokeWidth="2.5" />
+                    <circle cx="10" cy={isInvest ? 75 : isPass ? 20 : 50} r="4" fill="#ffffff" stroke={strokeColor} strokeWidth="2.5" />
           <circle cx="130" cy={isInvest ? 50 : isPass ? 45 : 55} r="4" fill="#ffffff" stroke={strokeColor} strokeWidth="2.5" />
           <circle cx="250" cy={isInvest ? 40 : isPass ? 60 : 45} r="4" fill="#ffffff" stroke={strokeColor} strokeWidth="2.5" />
           <circle cx="370" cy={isInvest ? 20 : isPass ? 70 : 52} r="4" fill="#ffffff" stroke={strokeColor} strokeWidth="2.5" />
@@ -224,13 +216,11 @@ function ValuationTrajectoryChart({ companyName, decision, confidence }) {
   );
 }
 
-// Structured Content Formatter: parses analysis text into clean visual cards
 function FormattedAnalysisView({ text, category }) {
   if (!text) {
     return <p className="text-muted">No detailed analysis published for this section.</p>;
   }
 
-  // Parse lines, bullet points and bold headings
   const paragraphs = text
     .split(/\n\s*\n/)
     .map((p) => p.trim())
@@ -239,7 +229,6 @@ function FormattedAnalysisView({ text, category }) {
   return (
     <div className="structured-analysis-container">
       {paragraphs.map((para, idx) => {
-        // Detect bulleted or list style items
         const isBulletList = para.includes("\n-") || para.includes("\n*") || para.startsWith("- ") || para.startsWith("* ");
 
         if (isBulletList) {
@@ -272,7 +261,6 @@ function FormattedAnalysisView({ text, category }) {
           );
         }
 
-        // Standard highlight paragraph
         return (
           <div key={idx} className="analysis-prose-block">
             <p>{para}</p>
@@ -283,7 +271,6 @@ function FormattedAnalysisView({ text, category }) {
   );
 }
 
-// Interactive Analyst Clarification Chat
 function AnalystQnAPanel({ company, result }) {
   const [messages, setMessages] = useState([
     {
@@ -367,8 +354,7 @@ function AnalystQnAPanel({ company, result }) {
         )}
       </div>
 
-      {/* Suggested Query Chips */}
-      <div className="chat-suggestions-ribbon">
+            <div className="chat-suggestions-ribbon">
         <span className="suggestions-label">Inquire:</span>
         <div className="suggestions-scroll">
           {SUGGESTED_QUERIES.map((sq, i) => (
@@ -384,8 +370,7 @@ function AnalystQnAPanel({ company, result }) {
         </div>
       </div>
 
-      {/* Input bar */}
-      <form
+            <form
         className="chat-input-bar"
         onSubmit={(e) => {
           e.preventDefault();
@@ -426,7 +411,6 @@ function CompanySearch({ currentUser, onLogout }) {
     fetchHistory();
   }, []);
 
-  // Progress through analytical phases during report compilation
   useEffect(() => {
     let interval;
     if (loading) {
@@ -601,8 +585,7 @@ function CompanySearch({ currentUser, onLogout }) {
 
   return (
     <div className="terminal-shell">
-      {/* Toast Alert */}
-      <AnimatePresence>
+            <AnimatePresence>
         {toastMessage && (
           <motion.div
             className="terminal-toast"
@@ -617,8 +600,7 @@ function CompanySearch({ currentUser, onLogout }) {
         )}
       </AnimatePresence>
 
-      {/* TOP NAVIGATION BAR */}
-      <header className="terminal-topbar">
+            <header className="terminal-topbar">
         <div className="topbar-left-zone">
           <div
             className="corporate-logo"
@@ -666,8 +648,7 @@ function CompanySearch({ currentUser, onLogout }) {
             <span>Coverage Framework</span>
           </button>
 
-          {/* User Account Popover */}
-          <div className="user-profile-anchor">
+                    <div className="user-profile-anchor">
             <button
               type="button"
               className="user-btn-trigger"
@@ -739,8 +720,7 @@ function CompanySearch({ currentUser, onLogout }) {
       </header>
 
       <div className="terminal-main-layout">
-        {/* SIDEBAR NAVIGATION */}
-        <aside className="terminal-sidebar">
+                <aside className="terminal-sidebar">
           <div className="sidebar-section">
             <span className="sidebar-heading">EQUITY COVERAGE</span>
             <button
@@ -800,12 +780,10 @@ function CompanySearch({ currentUser, onLogout }) {
           </div>
         </aside>
 
-        {/* WORKSPACE AREA */}
-        <main className="terminal-content">
+                <main className="terminal-content">
           {activeSidebar === "new" && (
             <div className="content-stack">
-              {/* RESEARCH SEARCH CARD */}
-              <motion.section
+                            <motion.section
                 className="search-deck-card"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -862,8 +840,7 @@ function CompanySearch({ currentUser, onLogout }) {
                   </motion.button>
                 </form>
 
-                {/* Popular coverage suggestions */}
-                <div className="coverage-chips-row">
+                                <div className="coverage-chips-row">
                   <span className="chips-title">Active Universe:</span>
                   <div className="chips-wrapper">
                     {COVERAGE_UNIVERSE.map((c) => (
@@ -902,8 +879,7 @@ function CompanySearch({ currentUser, onLogout }) {
                 </AnimatePresence>
               </motion.section>
 
-              {/* LOADING INDICATOR */}
-              <AnimatePresence>
+                            <AnimatePresence>
                 {loading && (
                   <motion.section
                     className="compilation-stepper-card"
@@ -958,8 +934,7 @@ function CompanySearch({ currentUser, onLogout }) {
                 )}
               </AnimatePresence>
 
-              {/* REPORT DASHBOARD DISPLAY */}
-              <AnimatePresence mode="wait">
+                            <AnimatePresence mode="wait">
                 {result && !loading && (
                   <motion.div
                     className="report-canvas"
@@ -969,8 +944,7 @@ function CompanySearch({ currentUser, onLogout }) {
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.45, ease: "easeOut" }}
                   >
-                    {/* COMPANY REPORT HEADER */}
-                    <section className="report-deck-card">
+                                        <section className="report-deck-card">
                       <div className="report-deck-top">
                         <div className="company-summary-unit">
                           <CompanyLogo name={result.company} size={48} />
@@ -991,8 +965,7 @@ function CompanySearch({ currentUser, onLogout }) {
                           </div>
                         </div>
 
-                        {/* Action buttons toolbar */}
-                        <div className="report-toolbar">
+                                                <div className="report-toolbar">
                           <button
                             type="button"
                             className={`toolbar-btn ${result.saved ? "bookmarked" : ""}`}
@@ -1035,8 +1008,7 @@ function CompanySearch({ currentUser, onLogout }) {
                         </div>
                       </div>
 
-                      {/* RECOMMENDATION CALLOUT */}
-                      <div className={`recommendation-banner ${result.decision?.toLowerCase()}`}>
+                                            <div className={`recommendation-banner ${result.decision?.toLowerCase()}`}>
                         <div className="recommendation-content">
                           <span className="rating-eyebrow">ANALYST COMMITTEE TARGET RATING</span>
                           <div className="rating-headline-row">
@@ -1062,8 +1034,7 @@ function CompanySearch({ currentUser, onLogout }) {
                         </div>
                       </div>
 
-                      {/* Consensus Distribution Meter Bar */}
-                      <div className="consensus-meter-container">
+                                            <div className="consensus-meter-container">
                         <div className="consensus-meter-labels">
                           <span className="meter-label">Institutional Consensus Spread:</span>
                           <span className="meter-distribution">
@@ -1080,15 +1051,13 @@ function CompanySearch({ currentUser, onLogout }) {
                       </div>
                     </section>
 
-                    {/* VALUATION TRAJECTORY CHART */}
-                    <ValuationTrajectoryChart
+                                        <ValuationTrajectoryChart
                       companyName={result.company}
                       decision={result.decision}
                       confidence={result.confidence}
                     />
 
-                    {/* 4 QUANTITATIVE SCORE TILES */}
-                    <section className="metrics-quad-grid">
+                                        <section className="metrics-quad-grid">
                       <motion.div className="metric-tile" whileHover={{ y: -3 }}>
                         <div className="metric-tile-header">
                           <div className="metric-icon-title">
@@ -1166,8 +1135,7 @@ function CompanySearch({ currentUser, onLogout }) {
                       </motion.div>
                     </section>
 
-                    {/* DETAILED RESEARCH & CHAT TABS */}
-                    <section className="coverage-tabs-deck">
+                                        <section className="coverage-tabs-deck">
                       <div className="tabs-header-bar">
                         {Object.entries(tabs).map(([key, tab]) => (
                           <button
@@ -1327,14 +1295,7 @@ function CompanySearch({ currentUser, onLogout }) {
                           )}
                         </AnimatePresence>
 
-                        <div className="compliance-disclaimer-box">
-                          <Info size={15} />
-                          <span>
-                            <strong>Regulatory Notice:</strong> This research note is prepared by Apex
-                            Equity Intelligence for institutional review. Cross-reference company 10-K,
-                            10-Q, and statutory filings prior to investment execution.
-                          </span>
-                        </div>
+                        
                       </div>
                     </section>
                   </motion.div>
@@ -1343,8 +1304,7 @@ function CompanySearch({ currentUser, onLogout }) {
             </div>
           )}
 
-          {/* COVERAGE ARCHIVE & WATCHLIST VIEW */}
-          {(activeSidebar === "history" || activeSidebar === "saved") && (
+                    {(activeSidebar === "history" || activeSidebar === "saved") && (
             <div className="archive-deck">
               <div className="archive-header-row">
                 <div>
@@ -1449,8 +1409,7 @@ function CompanySearch({ currentUser, onLogout }) {
         </main>
       </div>
 
-      {/* CONFIRM DELETE MODAL */}
-      <AnimatePresence>
+            <AnimatePresence>
         {deleteConfirmId && (
           <div className="modal-overlay" onClick={() => setDeleteConfirmId(null)}>
             <motion.div
@@ -1490,8 +1449,7 @@ function CompanySearch({ currentUser, onLogout }) {
         )}
       </AnimatePresence>
 
-      {/* METHODOLOGY & COVERAGE MODAL */}
-      <AnimatePresence>
+            <AnimatePresence>
         {showMethodology && (
           <div className="modal-overlay" onClick={() => setShowMethodology(false)}>
             <motion.div
