@@ -7,7 +7,6 @@ import {
   Lock, 
   Eye, 
   EyeOff,
-  TrendingUp,
   AlertCircle
 } from "lucide-react";
 

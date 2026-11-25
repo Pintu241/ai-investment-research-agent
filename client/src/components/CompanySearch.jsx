@@ -22,7 +22,6 @@ import {
   Check,
   ChevronRight,
   LogOut,
-  Info,
   BarChart3,
   RefreshCw,
   FileText,
@@ -33,12 +32,9 @@ import {
   Send,
   Sparkles,
   AlertTriangle,
-  ArrowUpRight,
-  ShieldCheck,
   Zap,
   Activity,
-  Layers,
-  PieChart
+  Layers
 } from "lucide-react";
 import "./CompanySearch.css";
 
@@ -414,7 +410,6 @@ function CompanySearch({ currentUser, onLogout }) {
   useEffect(() => {
     let interval;
     if (loading) {
-      setActivePhaseIndex(0);
       interval = setInterval(() => {
         setActivePhaseIndex((prev) => (prev < ANALYSIS_PHASES.length - 1 ? prev + 1 : prev));
       }, 3500);
@@ -446,6 +441,7 @@ function CompanySearch({ currentUser, onLogout }) {
     }
 
     try {
+      setActivePhaseIndex(0);
       setLoading(true);
       setError("");
       setResult(null);
