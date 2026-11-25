@@ -4,7 +4,7 @@ const resolveBaseURL = () => {
   if (typeof window !== "undefined") {
     const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
     if (!isLocalhost) {
-      return "/api";
+      return import.meta.env.VITE_API_URL || "/api";
     }
     if (window.location.port === "3000" || window.location.port === "80" || window.location.port === "") {
       return "/api";
