@@ -57,14 +57,18 @@ function Auth({ onAuthSuccess }) {
         localStorage.setItem("token", response.data.token);
         onAuthSuccess(response.data);
       } else {
-        setError(response.message || "Authentication failed");
+        setError(typeof response.message === "string" ? response.message : "Authentication failed");
       }
     } catch (err) {
       console.error("Auth error:", err);
+      const responseError = err.response?.data?.error;
+      const errorMessage =
+        err.response?.data?.message ||
+        (typeof responseError === "string" ? responseError : responseError?.message);
       setError(
-        err.response?.data?.message || 
-        err.response?.data?.error || 
-        "Something went wrong. Please check your connection."
+        typeof errorMessage === "string"
+          ? errorMessage
+          : "Something went wrong. Please check your connection."
       );
     } finally {
       setLoading(false);
